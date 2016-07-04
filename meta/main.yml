@@ -1,0 +1,14 @@
+galaxy_info:
+  author: mariojmdavid@gmail.com
+  description: Openstack Mitaka controller
+  company: LIP and INDIGO-DataCloud
+  license: Apache
+  min_ansible_version: 2.0
+  platforms:
+  - name: EL
+    versions:
+    - 7
+  galaxy_tags:
+  - openstack
+  - centos7
+dependencies: []

@@ -1,0 +1,4 @@
+---
+- hosts: localhost
+  roles:
+    - { role: LIP-Computing.openstack-controller, openstack_controller_host: 192.168.1.1, openstack_admin_token: "openstack", openstack_admin_password: "openstack" }
