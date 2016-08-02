@@ -12,19 +12,19 @@
 - include: keystone.yml
 
 # glance
-#- include: glance.yml
+- include: glance.yml
 
 # nova
-#- include: nova.yml
+- include: nova.yml
 
 # neutron
-#- include: neutron.yml
+- include: neutron.yml
 
 # horizon
-#- include: horizon.yml
+- include: horizon.yml
 
 # cinder
-#- include: cinder.yml
+- include: cinder.yml
 
 # firewall
-#- include: firewall.yml
+- include: firewall.yml
