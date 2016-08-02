@@ -1,17 +1,32 @@
 ---
 # Pre deployment tasks
 
-- name: Install mariadb and several other packages
+- name: Install required packages
   yum: name="{{ item }}" state=latest
   with_items:
     - curl
     - git
-    - mariadb-server
-    - mariadb
     - python-devel
     - python-pip
     - tar
     - wget
+
+- name: Install yum-plugin-priorities and epel-release
+  yum: name="{{ item }}" state=latest
+  with_items:
+    - yum-plugin-priorities
+    - epel-release
+
+- name: Install Openstack {{ openstack_version | default(liberty) }}  packages
+  yum: name="{{ item }}" state=latest
+  with_items:
+    - centos-release-openstack-{{ openstack_version | default(liberty) }}
+
+- name: Upudate cache and install the openstack-selinux package
+  yum: name="{{ item }}" state=latest
+   # update_cache=yes
+  with_items:
+    - openstack-selinux
 
 # openstack shade will be used later on in the deploy/config of OS
 - name: pip update and install openstack shade
@@ -19,22 +34,3 @@
   with_items:
     - pip
     - shade
-
-
-- name: Ensure service is started and that it always starts on boot
-  service: name=mariadb state=started enabled=yes
-
-- name: 'Setup DB root user'
-  mysql_user:
-    name: "root"
-    password: "{{ db_root_password }}"
-    host: "{{ item }}"
-    priv: "{{ db_priv | default('*.*:ALL') }}"
-    login_host: "{{ openstack_database_host }}"
-    login_user: "{{ openstack_database_root | default('root') }}"
-    login_password: "{{ openstack_database_root_password }}"
-    state: present
-  with_items:
-    - localhost
-    - "%"
-  run_once: True
