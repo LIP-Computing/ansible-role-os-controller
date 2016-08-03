@@ -15,7 +15,7 @@
     openstack_memcached_servers: localhost:11211
 
   roles:
-    - geerlingguy.mysql
+#    - geerlingguy.mysql
     - ansible-role-os-controller
 
 

@@ -22,6 +22,11 @@ openstack_admin_project: "admin"
 openstack_admin_password: "openstack"
 openstack_admin_role: "admin"
 
+# rabbitmq variables
+rabbit_host: localhost
+rabbit_user: openstack
+rabbit_pass: 12345
+
 # keystone
 openstack_keystone_db_name: "keystone"
 openstack_keystone_db_user: "keystone"

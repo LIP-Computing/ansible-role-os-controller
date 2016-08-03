@@ -14,6 +14,7 @@
     - httpd
     - memcached
     - mod_wsgi
+    - rabbitmq-server
 
 - name: Install yum-plugin-priorities and epel-release
   yum: name="{{ item }}" state=latest
@@ -30,7 +31,7 @@
   yum: name="{{ item }}" state=latest
   with_items:
     - python-openstackclient
-    
+
 # USEFUL?--->>>>
 - name: Upudate cache and install the openstack-selinux package
   yum: name="{{ item }}" state=latest update_cache=yes

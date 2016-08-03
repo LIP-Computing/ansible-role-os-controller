@@ -1,38 +1,55 @@
 ---
-# tasks file for keystone
-
-# Prerequisites
-- name: Prepare Database for keystone.
-  include: database.yml
-  vars:
-    db_name: "{{ openstack_keystone_db_name }}"
-    db_user: "{{ openstack_keystone_db_user }}"
-    db_password: "{{ openstack_keystone_db_password }}"
-    db_priv: "{{ openstack_keystone_db_name }}.*:ALL"
-  tags: database
-
-- name: Install OpenStack keystone package.
-  yum: name={{ item }} state=latest
-  with_items:
-    - openstack-keystone
-  retries: 2
-  delay: 5
-
-- name: Configure httpd Listen Port.
-  lineinfile: >
-    dest=/etc/httpd/conf/httpd.conf
-    regexp="{{ item.regexp }}"
-    line="{{ item.line }}"
-    state=present
-  with_items:
-    - { regexp: "^#?Listen", line: "Listen {{ mgmt_ip }}:80" }
-
+## tasks file for keystone
+#
+## Prerequisites
+#- name: Prepare Database for keystone.
+#  include: database.yml
+#  vars:
+#    db_name: "{{ openstack_keystone_db_name }}"
+#    db_user: "{{ openstack_keystone_db_user }}"
+#    db_password: "{{ openstack_keystone_db_password }}"
+#    db_priv: "{{ openstack_keystone_db_name }}.*:ALL"
+#  tags: database
+#
+#- name: Install OpenStack keystone package.
+#  yum: name={{ item }} state=latest
+#  with_items:
+#    - openstack-keystone
+#  retries: 2
+#  delay: 5
+#
+#- name: Configure httpd Listen Port.
+#  lineinfile: >
+#    dest=/etc/httpd/conf/httpd.conf
+#    regexp="{{ item.regexp }}"
+#    line="{{ item.line }}"
+#    state=present
+#  with_items:
+#    - { regexp: "^#?Listen", line: "Listen {{ mgmt_ip }}:80" }
+#
+##rabbit
+#- name: Service rabbitmq
+#  service: name=rabbitmq-server enabled=yes state=restarted
+#
+#- name: rabbitmq user setup
+#  rabbitmq_user: user={{ rabbit_user }}
+#                 password={{ rabbit_pass }}
+#                 vhost=/
+#                 configure_priv=.*
+#                 read_priv=.*
+#                 write_priv=.*
+#                 state=present
+#
 - name: Copy the configuration files for keystone.
   template: src=keystone.conf.j2 dest=/etc/keystone/keystone.conf
   #notify: restart keystone
 
 - name: Copy the configuration files for keystone wsgi.
   template: src=wsgi-keystone.conf.j2 dest=/etc/httpd/conf.d/wsgi-keystone.conf
+  notify: restart httpd
+
+- name: Copy the configuration files for keystone paste.
+  template: src=keystone-dist-paste.ini.j2 dest=/etc/keystone/keystone-dist-paste.ini
   notify: restart httpd
 
 - name: Ensure keystone is started and enabled on boot.
@@ -42,19 +59,27 @@
 
 - name: Waiting for keystone service is started.
   wait_for: "host={{ openstack_controller_host }} port=35357 delay=10 timeout=30"
-  run_once: True
+  run_once: true
 
-- name: DB sync for keystone.
-  shell: su -s /bin/sh -c "keystone-manage db_sync" keystone
+- name:  Create keystone tables in DB
+  command: keystone-manage db_sync
+  become: true
+  become_user: keystone
   ignore_errors: True
   run_once: True
-#
-#- name: Create the service entity for keystone.
-#  include: service_create.yml
-#  vars:
-#    name: keystone
-#    type: identity
-#    description: OpenStack Identity
+
+- name: Initialize fernet tokens
+  command: keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
+
+- name: Service http
+  service: name=httpd enabled=yes state=restarted
+
+- name: Create the service entity for keystone.
+  include: service_create.yml
+  vars:
+    name: keystone
+    type: identity
+    description: OpenStack Identity
 #
 #- name: Create the API endpoint for keystone.
 #  include: endpoint_create.yml

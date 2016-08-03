@@ -6,7 +6,7 @@
   tags: limits
 
 # Prepare deployment
-- include: pre-deploy.yml
+#- include: pre-deploy.yml
 
 # keystone
 - include: keystone.yml
