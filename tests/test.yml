@@ -7,14 +7,15 @@
     openstack_controller_host: localhost
     openstack_admin_token: "openstack"
     openstack_admin_password: "openstack"
-    openstack_database_root_password: root
-    mysql_root_username: root
+    openstack_database_root: "root"
+    openstack_database_root_password: "root"
+    mysql_root_username: "{{ openstack_database_root }}"
     mysql_root_password: "{{ openstack_database_root_password }}"
     mgmt_ip: localhost
     openstack_memcached_servers: localhost:11211
 
   roles:
-#    - geerlingguy.mysql
+    - geerlingguy.mysql
     - ansible-role-os-controller
 
 
