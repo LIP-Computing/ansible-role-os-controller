@@ -18,15 +18,6 @@
   retries: 2
   delay: 5
 
-- name: Configure httpd Listen Port.
-  lineinfile: >
-    dest=/etc/httpd/conf/httpd.conf
-    regexp="{{ item.regexp }}"
-    line="{{ item.line }}"
-    state=present
-  with_items:
-    - { regexp: "^#?Listen", line: "Listen {{ mgmt_ip }}:80" }
-
 #rabbit
 - name: Service rabbitmq
   service: name=rabbitmq-server enabled=yes state=restarted
@@ -40,22 +31,16 @@
                  write_priv=.*
                  state=present
 
-- name: Copy the configuration files for keystone.
-  template: src=keystone.conf.j2 dest=/etc/keystone/keystone.conf
-  #notify: restart keystone
-
-- name: Copy the configuration files for keystone wsgi.
-  template: src=wsgi-keystone.conf.j2 dest=/etc/httpd/conf.d/wsgi-keystone.conf
-  notify: restart httpd
-
-- name: Copy the configuration files for keystone paste.
-  template: src=keystone-dist-paste.ini.j2 dest=/etc/keystone/keystone-dist-paste.ini
-  notify: restart httpd
-
-- name: Ensure keystone is started and enabled on boot.
-  service: "name={{ item }} state=started enabled=yes"
+- name: Deploy keyston configuration files from templates
+  template: src={{ item.src }} dest={{ item.dest }} mode=0640 owner=keystone group=apache backup=yes
   with_items:
-    - httpd
+    - { src: 'keystone/keystone-dist-paste.ini.j2', dest: '/etc/keystone/keystone-dist-paste.ini' }
+    - { src: 'keystone/keystone.conf.j2', dest: '/etc/keystone/keystone.conf' }
+    - { src: 'keystone/policy.json.j2', dest: '/etc/keystone/policy.json' }
+    - { src: 'keystone/wsgi-keystone.conf.j2', dest: '/etc/httpd/conf.d/wsgi-keystone.conf' }
+
+- name: Service http
+  service: name=httpd enabled=yes state=restarted
 
 - name: Waiting for keystone service is started.
   wait_for: "host={{ openstack_controller_host }} port=35357 delay=10 timeout=30"
@@ -89,67 +74,32 @@
       internalurl: "{{ openstack_endpoint_internal_url }}"
       publicurl: "{{ openstack_endpoint_public_url }}"
 
-- name: "Create the admin project"
-  command: |
-    openstack project create  --domain default \
-    --description "Admin project" "{{ openstack_admin_project }}"
+# admin
+- name: "Admin credentials: create user, project and role. Link them"
+  include: create_user_credentials.yml
+  vars:
+    username: admin
+    password: "{{ openstack_admin_password }}"
+    project: admin
+    project_description: "Admin project"
+    role: admin
   environment: "{{ token_auth_env }}"
-  run_once: True
 
-- name: "Create the admin user"
-  command: |
-    openstack user create  --domain default \
-    --password "{{ openstack_admin_password }}" \
-    "{{ openstack_admin_user }}"
+# user
+- name: "User credentials: create user, project and role. Link them"
+  include: create_user_credentials.yml
+  vars:
+    username: "{{ openstack_user_name }}"
+    password: "{{ openstack_user_password }}"
+    project: "{{ openstack_user_project }}"
+    project_description: "Demo project"
+    role: "{{ openstack_user_role }}"
   environment: "{{ token_auth_env }}"
-  run_once: True
 
-- name: "Create the admin role"
-  command: |
-    openstack role create "{{ openstack_admin_role }}"
-  environment: "{{ token_auth_env }}"
-  run_once: True
-
-- name: "Add the admin role to the admin project and user"
-  command: |
-    openstack role add --project "{{ openstack_admin_project }}" \
-    --user "{{ openstack_admin_user }}" "{{ openstack_admin_role }}"
-  environment: "{{ token_auth_env }}"
-  run_once: True
-
+#service
 - name: "Create the service project"
   command: |
     openstack project create  --domain default \
     --description "Service project" service
   environment: "{{ token_auth_env }}"
   run_once: True
-
-# user
-- name: "Create the user project"
-  command: |
-    openstack project create  --domain default \
-    --description "Demo project" "{{ openstack_user_project }}"
-  environment: "{{ token_auth_env }}"
-  run_once: True
-
-- name: "Create the user"
-  command: |
-    openstack user create  --domain default \
-    --password "{{ openstack_user_password }}" \
-    "{{ openstack_user_name }}"
-  environment: "{{ token_auth_env }}"
-  run_once: True
-
-- name: "Create the user role"
-  command: |
-    openstack role create "{{ openstack_user_role }}"
-  environment: "{{ token_auth_env }}"
-  run_once: True
-
-- name: "Add the admin role to the admin project and user"
-  command: |
-    openstack role add --project "{{ openstack_user_project }}" \
-    --user "{{ openstack_user_name }}" "{{ openstack_user_role }}"
-  environment: "{{ token_auth_env }}"
-  run_once: True
-
