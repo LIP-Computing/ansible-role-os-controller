@@ -1,0 +1,28 @@
+---
+- hosts: localhost
+  environment:
+    TERM: "dumb"
+  vars:
+    openstack_version: "liberty"
+    openstack_controller_host: localhost
+    openstack_admin_token: "openstack"
+    openstack_admin_password: "openstack"
+    openstack_database_root: "root"
+    openstack_database_root_password: "root"
+    mysql_root_username: "{{ openstack_database_root }}"
+    mysql_root_password: "{{ openstack_database_root_password }}"
+    mgmt_ip: localhost
+    openstack_memcached_servers: localhost:11211
+
+  roles:
+    #- geerlingguy.mysql
+    - ansible-role-os-controller
+
+
+
+#    mysql_bind_address: '10.0.0.11'
+#    openstack_db_init_connect: 'SET NAMES utf8'
+#    openstack_db_character_set: utf8
+#    openstack_db_collation_server: 'utf8_general_ci'
+#    openstack_db_default_engine: innodb
+#    openstack_db_innodb_file_per_table: 1

@@ -46,6 +46,9 @@
   wait_for: "host={{ openstack_controller_host }} port=35357 delay=10 timeout=30"
   run_once: true
 
+- name: Give permissions to keystone.log
+  file: path=/var/log/keystone/keystone.log state=touch mode=0640 owner=keystone group=apache
+
 - name:  Create keystone tables in DB
   shell: keystone-manage db_sync
   become_user: keystone

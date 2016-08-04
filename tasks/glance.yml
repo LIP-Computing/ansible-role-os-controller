@@ -64,6 +64,9 @@
 #    - { src: 'glance/policy.json.j2', dest: '/etc/glance/policy.json' }
   notify: restart glance-registry
 
+- name: Give permissions to /var/log/glance/api.log
+  file: path=/var/log/glance/api.log state=touch mode=0640 owner=glance group=apache
+
 - name:  Create keystone tables in DB
   shell: glance-manage db_sync
   become_user: glance

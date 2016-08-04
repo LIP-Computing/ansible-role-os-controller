@@ -1,6 +1,13 @@
 [DEFAULT]
+public_endpoint = {{ openstack_ath_uri }}
+admin_endpoint = {{ openstack_ath_url }}
+
 admin_token = {{ openstack_admin_token }}
 verbose = {{ openstack_keystone_config_default_verbose }}
+member_role_name = _member_
+log_file = /var/log/keystone/keystone.log
+rpc_backend = rabbit
+
 
 #
 # From keystone
@@ -573,6 +580,9 @@ connection = mysql://keystone:{{ openstack_keystone_db_password }}@{{ openstack_
 
 
 [domain_config]
+driver = sql
+caching = true
+cache_time = 300
 
 #
 # From keystone
@@ -738,6 +748,7 @@ admin_bind_host = {{ mgmt_ip }}
 
 
 [federation]
+driver = sql
 
 #
 # From keystone
@@ -775,6 +786,8 @@ admin_bind_host = {{ mgmt_ip }}
 
 
 [fernet_tokens]
+key_repository = /etc/keystone/fernet-keys/
+max_active_keys = 3
 
 #
 # From keystone
@@ -1337,6 +1350,7 @@ servers = {{ openstack_memcached_servers }}
 
 
 [oauth1]
+driver = sql
 
 #
 # From keystone
@@ -1489,7 +1503,10 @@ servers = {{ openstack_memcached_servers }}
 
 
 [oslo_messaging_rabbit]
-
+rabbit_host = {{ rabbit_host }}
+rabbit_port = 5672
+rabbit_userid = {{ rabbit_user }}
+rabbit_password = {{ rabbit_pass }}
 #
 # From oslo.messaging
 #
@@ -1626,7 +1643,10 @@ servers = {{ openstack_memcached_servers }}
 
 
 [oslo_policy]
+policy_file = policy.json
+policy_default_rule = default
 
+#policy_dirs = policy.d
 #
 # From oslo.policy
 #
@@ -1677,7 +1697,7 @@ config_file = /etc/keystone/keystone-dist-paste.ini
 
 
 [resource]
-
+driver = sql
 #
 # From keystone
 #
@@ -1888,6 +1908,7 @@ driver = {{ openstack_keystone_config_revoke_driver }}
 [token]
 provider = {{ openstack_keystone_config_token_provider }}
 driver = {{ openstack_keystone_config_token_driver }}
+expiration = 432000
 
 #
 # From keystone
@@ -1970,6 +1991,8 @@ driver = {{ openstack_keystone_config_token_driver }}
 
 
 [trust]
+enabled = true
+driver = sql
 
 #
 # From keystone

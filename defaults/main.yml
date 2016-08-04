@@ -34,8 +34,8 @@ openstack_keystone_db_name: "keystone"
 openstack_keystone_db_user: "keystone"
 openstack_keystone_db_password: "keystone"
 openstack_keystone_config_default_verbose: "True"
-openstack_keystone_config_token_provider: "uuid"
-openstack_keystone_config_token_driver: "memcache"
+openstack_keystone_config_token_provider: "fernet"
+openstack_keystone_config_token_driver: "sql"
 openstack_keystone_config_revoke_driver: "sql"
 #openstack_keystone_service_name: keystone
 #openstack_keystone_service_region: RegionOne
