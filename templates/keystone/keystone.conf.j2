@@ -479,7 +479,7 @@ rpc_backend = rabbit
 
 
 [database]
-connection = mysql://keystone:{{ openstack_keystone_db_password }}@{{ openstack_database_host }}/keystone
+connection = "mysql+pymysql://keystone:{{ openstack_keystone_db_password }}@{{ openstack_database_host }}/keystone"
 
 #
 # From oslo.db

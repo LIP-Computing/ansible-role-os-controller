@@ -36,7 +36,7 @@
   with_items:
     - { src: 'keystone/keystone-dist-paste.ini.j2', dest: '/etc/keystone/keystone-dist-paste.ini' }
     - { src: 'keystone/keystone.conf.j2', dest: '/etc/keystone/keystone.conf' }
-    - { src: 'keystone/policy.json.j2', dest: '/etc/keystone/policy.json' }
+#    - { src: 'keystone/policy.json.j2', dest: '/etc/keystone/policy.json' } MAKE PROBLEMS
     - { src: 'keystone/wsgi-keystone.conf.j2', dest: '/etc/httpd/conf.d/wsgi-keystone.conf' }
 
 - name: Service http
@@ -54,11 +54,11 @@
   become_user: keystone
   run_once: True
 
-- name: Initialize fernet tokens
-  command: keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
-
-- name: Service http
-  service: name=httpd enabled=yes state=restarted
+#- name: Initialize fernet tokens
+#  command: keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
+#
+#- name: Service http
+#  service: name=httpd enabled=yes state=restarted
 
 - name: Create the service entity for keystone.
   include: service_create.yml
