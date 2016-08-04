@@ -1,45 +1,45 @@
 ---
-## tasks file for keystone
-#
-## Prerequisites
-#- name: Prepare Database for keystone.
-#  include: database.yml
-#  vars:
-#    db_name: "{{ openstack_keystone_db_name }}"
-#    db_user: "{{ openstack_keystone_db_user }}"
-#    db_password: "{{ openstack_keystone_db_password }}"
-#    db_priv: "{{ openstack_keystone_db_name }}.*:ALL"
-#  tags: database
-#
-#- name: Install OpenStack keystone package.
-#  yum: name={{ item }} state=latest
-#  with_items:
-#    - openstack-keystone
-#  retries: 2
-#  delay: 5
-#
-#- name: Configure httpd Listen Port.
-#  lineinfile: >
-#    dest=/etc/httpd/conf/httpd.conf
-#    regexp="{{ item.regexp }}"
-#    line="{{ item.line }}"
-#    state=present
-#  with_items:
-#    - { regexp: "^#?Listen", line: "Listen {{ mgmt_ip }}:80" }
-#
-##rabbit
-#- name: Service rabbitmq
-#  service: name=rabbitmq-server enabled=yes state=restarted
-#
-#- name: rabbitmq user setup
-#  rabbitmq_user: user={{ rabbit_user }}
-#                 password={{ rabbit_pass }}
-#                 vhost=/
-#                 configure_priv=.*
-#                 read_priv=.*
-#                 write_priv=.*
-#                 state=present
-#
+# tasks file for keystone
+
+# Prerequisites
+- name: Prepare Database for keystone.
+  include: database.yml
+  vars:
+    db_name: "{{ openstack_keystone_db_name }}"
+    db_user: "{{ openstack_keystone_db_user }}"
+    db_password: "{{ openstack_keystone_db_password }}"
+    db_priv: "{{ openstack_keystone_db_name }}.*:ALL"
+  tags: database
+
+- name: Install OpenStack keystone package.
+  yum: name={{ item }} state=latest
+  with_items:
+    - openstack-keystone
+  retries: 2
+  delay: 5
+
+- name: Configure httpd Listen Port.
+  lineinfile: >
+    dest=/etc/httpd/conf/httpd.conf
+    regexp="{{ item.regexp }}"
+    line="{{ item.line }}"
+    state=present
+  with_items:
+    - { regexp: "^#?Listen", line: "Listen {{ mgmt_ip }}:80" }
+
+#rabbit
+- name: Service rabbitmq
+  service: name=rabbitmq-server enabled=yes state=restarted
+
+- name: rabbitmq user setup
+  rabbitmq_user: user={{ rabbit_user }}
+                 password={{ rabbit_pass }}
+                 vhost=/
+                 configure_priv=.*
+                 read_priv=.*
+                 write_priv=.*
+                 state=present
+
 - name: Copy the configuration files for keystone.
   template: src=keystone.conf.j2 dest=/etc/keystone/keystone.conf
   #notify: restart keystone
@@ -62,10 +62,8 @@
   run_once: true
 
 - name:  Create keystone tables in DB
-  command: keystone-manage db_sync
-  become: true
+  shell: keystone-manage db_sync
   become_user: keystone
-  ignore_errors: True
   run_once: True
 
 - name: Initialize fernet tokens
@@ -80,78 +78,78 @@
     name: keystone
     type: identity
     description: OpenStack Identity
-#
-#- name: Create the API endpoint for keystone.
-#  include: endpoint_create.yml
-#  vars:
-#    service: identity
-#    region: RegionOne
-#    endpoints:
-#      adminurl: "{{ openstack_endpoint_admin_url }}"
-#      internalurl: "{{ openstack_endpoint_internal_url }}"
-#      publicurl: "{{ openstack_endpoint_public_url }}"
-#
-#- name: "Create the admin project"
-#  command: |
-#    openstack project create  --domain default \
-#    --description "Admin project" "{{ openstack_admin_project }}"
-#  environment: "{{ token_auth_env }}"
-#  run_once: True
-#
-#- name: "Create the admin user"
-#  command: |
-#    openstack user create  --domain default \
-#    --password "{{ openstack_admin_password }}" \
-#    "{{ openstack_admin_user }}"
-#  environment: "{{ token_auth_env }}"
-#  run_once: True
-#
-#- name: "Create the admin role"
-#  command: |
-#    openstack role create "{{ openstack_admin_role }}"
-#  environment: "{{ token_auth_env }}"
-#  run_once: True
-#
-#- name: "Add the admin role to the admin project and user"
-#  command: |
-#    openstack role add --project "{{ openstack_admin_project }}" \
-#    --user "{{ openstack_admin_user }}" "{{ openstack_admin_role }}"
-#  environment: "{{ token_auth_env }}"
-#  run_once: True
-#
-#- name: "Create the service project"
-#  command: |
-#    openstack project create  --domain default \
-#    --description "Service project" service
-#  environment: "{{ token_auth_env }}"
-#  run_once: True
-#
-## user
-#- name: "Create the user project"
-#  command: |
-#    openstack project create  --domain default \
-#    --description "Demo project" "{{ openstack_user_project }}"
-#  environment: "{{ token_auth_env }}"
-#  run_once: True
-#
-#- name: "Create the user"
-#  command: |
-#    openstack user create  --domain default \
-#    --password "{{ openstack_user_password }}" \
-#    "{{ openstack_user_name }}"
-#  environment: "{{ token_auth_env }}"
-#  run_once: True
-#
-#- name: "Create the user role"
-#  command: |
-#    openstack role create "{{ openstack_user_role }}"
-#  environment: "{{ token_auth_env }}"
-#  run_once: True
-#
-#- name: "Add the admin role to the admin project and user"
-#  command: |
-#    openstack role add --project "{{ openstack_user_project }}" \
-#    --user "{{ openstack_user_name }}" "{{ openstack_user_role }}"
-#  environment: "{{ token_auth_env }}"
-#  run_once: True
-#
+
+- name: Create the API endpoint for keystone.
+  include: endpoint_create.yml
+  vars:
+    service: identity
+    region: RegionOne
+    endpoints:
+      adminurl: "{{ openstack_endpoint_admin_url }}"
+      internalurl: "{{ openstack_endpoint_internal_url }}"
+      publicurl: "{{ openstack_endpoint_public_url }}"
+
+- name: "Create the admin project"
+  command: |
+    openstack project create  --domain default \
+    --description "Admin project" "{{ openstack_admin_project }}"
+  environment: "{{ token_auth_env }}"
+  run_once: True
+
+- name: "Create the admin user"
+  command: |
+    openstack user create  --domain default \
+    --password "{{ openstack_admin_password }}" \
+    "{{ openstack_admin_user }}"
+  environment: "{{ token_auth_env }}"
+  run_once: True
+
+- name: "Create the admin role"
+  command: |
+    openstack role create "{{ openstack_admin_role }}"
+  environment: "{{ token_auth_env }}"
+  run_once: True
+
+- name: "Add the admin role to the admin project and user"
+  command: |
+    openstack role add --project "{{ openstack_admin_project }}" \
+    --user "{{ openstack_admin_user }}" "{{ openstack_admin_role }}"
+  environment: "{{ token_auth_env }}"
+  run_once: True
+
+- name: "Create the service project"
+  command: |
+    openstack project create  --domain default \
+    --description "Service project" service
+  environment: "{{ token_auth_env }}"
+  run_once: True
+
+# user
+- name: "Create the user project"
+  command: |
+    openstack project create  --domain default \
+    --description "Demo project" "{{ openstack_user_project }}"
+  environment: "{{ token_auth_env }}"
+  run_once: True
+
+- name: "Create the user"
+  command: |
+    openstack user create  --domain default \
+    --password "{{ openstack_user_password }}" \
+    "{{ openstack_user_name }}"
+  environment: "{{ token_auth_env }}"
+  run_once: True
+
+- name: "Create the user role"
+  command: |
+    openstack role create "{{ openstack_user_role }}"
+  environment: "{{ token_auth_env }}"
+  run_once: True
+
+- name: "Add the admin role to the admin project and user"
+  command: |
+    openstack role add --project "{{ openstack_user_project }}" \
+    --user "{{ openstack_user_name }}" "{{ openstack_user_role }}"
+  environment: "{{ token_auth_env }}"
+  run_once: True
+
