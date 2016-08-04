@@ -12,7 +12,7 @@
 - include: keystone.yml
 
 # glance
-#- include: glance.yml
+- include: glance.yml
 
 # nova
 #- include: nova.yml
