@@ -8,7 +8,7 @@ security_group_api = neutron
 linuxnet_interface_driver = nova.network.linux_net.NeutronLinuxBridgeInterfaceDriver
 firewall_driver = nova.virt.firewall.NoopFirewallDriver
 
-enabled_apis=osapi_compute,metadata #ec2
+enabled_apis=ec2,osapi_compute,metadata
 verbose = True
 
 memcached_servers={{ openstack_memcached_servers }}
@@ -185,7 +185,7 @@ rpc_backend=rabbit
 
 # Top-level directory for maintaining nova's state (string
 # value)
-#state_path=/var/lib/nova
+state_path=/var/lib/nova
 
 
 #
@@ -285,7 +285,7 @@ rpc_backend=rabbit
 # The IP address on which the EC2 API will listen. (string
 # value)
 #ec2_listen=0.0.0.0
-#ec2_listen={{ openstack_controller_host }}
+ec2_listen={{ openstack_controller_host }}
 
 # The port on which the EC2 API will listen. (integer value)
 #ec2_listen_port=8773

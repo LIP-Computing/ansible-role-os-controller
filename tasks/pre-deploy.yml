@@ -47,17 +47,3 @@
     - pip
     - shade
 
-#http
-- name: Configure httpd Listen Port.
-  lineinfile: >
-    dest=/etc/httpd/conf/httpd.conf
-    regexp="{{ item.regexp }}"
-    line="{{ item.line }}"
-    state=present
-  with_items:
-    - { regexp: "^#?Listen", line: "Listen {{ openstack_controller_host }}:80" }
-
-- name: Start http daemon.
-  service: "name={{ item }} state=started enabled=yes"
-  with_items:
-    - httpd

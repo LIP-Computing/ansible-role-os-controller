@@ -7,18 +7,18 @@
 
 # Prepare deployment
 - include: pre-deploy.yml
-
-# keystone
+#
+## keystone
 - include: keystone.yml
-
-# glance
+#
+## glance
 - include: glance.yml
-
-# nova
+#
+## nova
 - include: nova.yml
 
 # neutron
-#- include: neutron.yml
+- include: neutron.yml
 
 # horizon
 #- include: horizon.yml

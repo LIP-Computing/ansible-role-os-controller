@@ -12,7 +12,7 @@
     openstack_keystone_config_revoke_driver: "sql"
     mysql_root_username: "{{ openstack_database_root }}"
     mysql_root_password: "{{ openstack_database_root_password }}"
-    openstack_ip: 10.0.0.11
+    openstack_ip: localhost
     openstack_memcached_servers: localhost:11211
 
   roles:

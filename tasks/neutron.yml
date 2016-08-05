@@ -54,7 +54,7 @@
     - { src: 'neutron/neutron.conf.j2', dest: '/etc/neutron/neutron.conf' }
     - { src: 'neutron/ml2_conf.ini.j2', dest: '/etc/neutron/plugins/ml2/ml2_conf.ini' }
     - { src: 'neutron/linuxbridge_agent.ini.j2', dest: '/etc/neutron/plugins/ml2/linuxbridge_agent.ini' }
-    - { src: 'neutron/dhcp_agent.ini.j2 ', dest: '/etc/neutron/dhcp_agent.ini' }
+    - { src: 'neutron/dhcp_agent.ini.j2', dest: '/etc/neutron/dhcp_agent.ini' }
     - { src: 'neutron/metadata_agent.ini.j2', dest: '/etc/neutron/metadata_agent.ini' }
 
 - name: Ensure ml2 config symbolic is exists.

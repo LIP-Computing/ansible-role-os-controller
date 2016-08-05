@@ -10,12 +10,6 @@ notify_nova_on_port_status_changes = True
 notify_nova_on_port_data_changes = True
 nova_url = http://{{ openstack_controller_host }}:8774/v2
 
-{% if openstack_ha %}
-dhcp_agents_per_network = 3
-l3_ha = True
-allow_automatic_l3agent_failover = True
-{% endif %}
-
 dhcp_lease_duration = -1
 
 # Print more verbose output (set logging level to INFO instead of default WARNING level).
@@ -736,8 +730,8 @@ quota_port = -1
 # ===========  end of items for agent management extension =====
 
 [keystone_authtoken]
-auth_uri = {{ openstack_auth_uri }}
-auth_url = {{ openstack_auth_url }}
+auth_uri = {{ openstack_ath_uri }}
+auth_url = {{ openstack_ath_url }}
 auth_plugin = password
 project_domain_id = default
 user_domain_id = default
@@ -802,7 +796,7 @@ connection = mysql://neutron:{{ openstack_neutron_db_password }}@{{ openstack_da
 # pool_timeout = 10
 
 [nova]
-auth_url = {{ openstack_keystone_auth_url }}
+auth_url = {{ openstack_ath_url }}
 auth_plugin = password
 project_domain_id = default
 user_domain_id = default
