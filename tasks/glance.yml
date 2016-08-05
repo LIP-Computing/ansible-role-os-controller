@@ -46,14 +46,6 @@
     - python-glance
     - python-glanceclient
 
-#- name: Copy the configuration files for glance-api.
-#  template: src=glance-api.conf.j2 dest=/etc/glance/glance-api.conf
-#  notify: restart glance-api
-#
-#- name: Copy the configuration files for glance-registry.
-#  template: src=glance-registry.conf.j2 dest=/etc/glance/glance-registry.conf
-#  notify: restart glance-registry
-
 - name: Deploy glance configuration files from templates
   template: src={{ item.src }} dest={{ item.dest }} backup=yes
   with_items:
@@ -61,7 +53,7 @@
     - { src: 'glance/glance-registry.conf.j2', dest: '/etc/glance/glance-registry.conf'}
     - { src: 'glance/glance-api-paste.ini.j2', dest: '/etc/glance/glance-api-paste.ini' }
     - { src: 'glance/glance-registry-paste.ini.j2', dest: '/etc/glance/glance-registry-paste.ini' }
-#    - { src: 'glance/policy.json.j2', dest: '/etc/glance/policy.json' }
+#    - { src: 'glance/policy.json.j2', dest: '/etc/glance/policy.json' }  TODO(jorgesece): check it
   notify: restart glance-registry
 
 - name: Give permissions to /var/log/glance/api.log
