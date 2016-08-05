@@ -1,5 +1,6 @@
 ---
 - hosts: localhost
+  # Solve mysql problems in docker
   environment:
     TERM: "dumb"
   vars:
@@ -20,11 +21,3 @@
     - geerlingguy.mysql
     - ansible-role-os-controller
 
-
-
-#    mysql_bind_address: '10.0.0.11'
-#    openstack_db_init_connect: 'SET NAMES utf8'
-#    openstack_db_character_set: utf8
-#    openstack_db_collation_server: 'utf8_general_ci'
-#    openstack_db_default_engine: innodb
-#    openstack_db_innodb_file_per_table: 1
