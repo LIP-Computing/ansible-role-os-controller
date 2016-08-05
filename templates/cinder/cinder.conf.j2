@@ -776,7 +776,7 @@ rbd_secret_uuid = {{ openstack_libvirt_secret_uuid }}
 
 # IP address on which OpenStack Volume API listens (string value)
 #osapi_volume_listen = 0.0.0.0
-osapi_volume_listen = {{ mgmt_ip }}
+osapi_volume_listen = {{ openstack_controller_host }}
 
 # Port on which OpenStack Volume API listens (integer value)
 # Minimum value: 1

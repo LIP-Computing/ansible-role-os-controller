@@ -23,8 +23,8 @@
   service: name=rabbitmq-server enabled=yes state=restarted
 
 - name: rabbitmq user setup
-  rabbitmq_user: user={{ rabbit_user }}
-                 password={{ rabbit_pass }}
+  rabbitmq_user: user={{ openstack_rabbit_user }}
+                 password={{ openstack_rabbit_pass }}
                  vhost=/
                  configure_priv=.*
                  read_priv=.*

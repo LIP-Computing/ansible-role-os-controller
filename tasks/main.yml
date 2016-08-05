@@ -15,7 +15,7 @@
 - include: glance.yml
 
 # nova
-#- include: nova.yml
+- include: nova.yml
 
 # neutron
 #- include: neutron.yml

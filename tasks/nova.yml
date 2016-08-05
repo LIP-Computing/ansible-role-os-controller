@@ -57,13 +57,15 @@
   notify: restart nova
 
 - name: DB sync for nova.
-  shell: su -s /bin/sh -c "nova-manage db sync" nova
-  ignore_errors: True
+  shell: nova-manage db sync
+  become_user: nova
   run_once: True
+
+- name: Give permissions to /var/log/nova/nova.log
+  file: path=/var/log/nova/nova.log state=touch mode=0640 owner=nova group=apache
 
 - name: Ensure nova service  is started and enabled on boot.
   service: name={{ item }} enabled=yes state=started
-  ignore_errors: True
   with_items:
     - openstack-nova-api
     - openstack-nova-cert

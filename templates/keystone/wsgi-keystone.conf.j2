@@ -1,5 +1,5 @@
-Listen {{ mgmt_ip }}:5000
-Listen {{ mgmt_ip }}:35357
+Listen {{ openstack_controller_host }}:5000
+Listen {{ openstack_controller_host }}:35357
 
 <VirtualHost *:5000>
     WSGIDaemonProcess keystone-public processes=5 threads=1 user=keystone group=keystone display-name=%{GROUP}

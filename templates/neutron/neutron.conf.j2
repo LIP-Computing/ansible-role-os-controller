@@ -59,7 +59,7 @@ dhcp_lease_duration = -1
 
 # Address to bind the API server to
 # bind_host = 0.0.0.0
-bind_host = {{ mgmt_ip }}
+bind_host = {{ openstack_controller_host }}
 
 # Port the bind the API server to
 # bind_port = 9696
@@ -736,8 +736,8 @@ quota_port = -1
 # ===========  end of items for agent management extension =====
 
 [keystone_authtoken]
-auth_uri = {{ openstack_keystone_auth_uri }}
-auth_url = {{ openstack_keystone_auth_url }}
+auth_uri = {{ openstack_auth_uri }}
+auth_url = {{ openstack_auth_url }}
 auth_plugin = password
 project_domain_id = default
 user_domain_id = default
@@ -980,18 +980,9 @@ lock_path = /var/lib/neutron/tmp
 
 
 [oslo_messaging_rabbit]
-{% if openstack_rabbit_hosts %}
-rabbit_hosts = {{ openstack_rabbit_hosts }}
-rabbit_retry_interval=1
-rabbit_retry_backoff=2
-rabbit_max_retries=0
-rabbit_durable_queues=true
-rabbit_ha_queues=true
-{% elif openstack_rabbit_host %}
 rabbit_host = {{ openstack_rabbit_host }}
-{% endif %}
-rabbit_userid = {{ openstack_rabbit_userid }}
-rabbit_password = {{ openstack_rabbit_password }}
+rabbit_userid = {{ openstack_rabbit_user }}
+rabbit_password = {{ openstack_rabbit_pass }}
 
 #
 # From oslo.messaging

@@ -656,7 +656,7 @@ cache_time = 300
 # This option is deprecated for removal.
 # Its value may be silently ignored in the future.
 #public_bind_host = 0.0.0.0
-public_bind_host = {{ mgmt_ip }}
+public_bind_host = {{ openstack_controller_host }}
 
 # The port number which the public service listens on. (integer value)
 # Minimum value: 1
@@ -673,7 +673,7 @@ public_bind_host = {{ mgmt_ip }}
 # This option is deprecated for removal.
 # Its value may be silently ignored in the future.
 #admin_bind_host = 0.0.0.0
-admin_bind_host = {{ mgmt_ip }}
+admin_bind_host = {{ openstack_controller_host }}
 
 # The port number which the admin service listens on. (integer value)
 # Minimum value: 1
@@ -1503,10 +1503,10 @@ driver = sql
 
 
 [oslo_messaging_rabbit]
-rabbit_host = {{ rabbit_host }}
+rabbit_host = {{ openstack_rabbit_host }}
 rabbit_port = 5672
-rabbit_userid = {{ rabbit_user }}
-rabbit_password = {{ rabbit_pass }}
+rabbit_userid = {{ openstack_rabbit_user }}
+rabbit_password = {{ openstack_rabbit_pass }}
 #
 # From oslo.messaging
 #
