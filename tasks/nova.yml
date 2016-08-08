@@ -10,25 +10,23 @@
     db_password: "{{ openstack_nova_db_password }}"
   tags: database
 
-- name: "Nova credentials: create user, project and role. Link them"
-  include: create_user_credentials.yml
+- name: "Create nova user in service"
+  include: openstack/create_user_in_project.yml
   vars:
     username: nova
     password: "{{ openstack_nova_keystone_password }}"
     project: service
-    project_description: "Service project"
     role: admin
-  environment: "{{ token_auth_env }}"
 
 - name: Create the service entity for nova.
-  include: service_create.yml
+  include: openstack/create_service.yml
   vars:
     name: nova
     type: compute
     description: OpenStack Compute
 
 - name: Create the API endpoint for nova.
-  include: endpoint_create.yml
+  include: openstack/create_endpoint.yml
   vars:
     service: compute
     region: RegionOne

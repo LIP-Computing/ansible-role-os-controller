@@ -11,24 +11,22 @@
   tags: database
 
 - name: Create the service user for neutron.
-  include: create_user_credentials.yml
+  include: openstack/create_user_in_project.yml
   vars:
     username: neutron
     password: "{{ openstack_neutron_keystone_password }}"
     project: service
-    project_description: "Service project"
     role: admin
-  environment: "{{ token_auth_env }}"
 
 - name: Create the service entity for neutron.
-  include: service_create.yml
+  include: openstack/create_service.yml
   vars:
     name: neutron
     type: network
     description: OpenStack Networking
 
 - name: Create the API endpoint for neutron.
-  include: endpoint_create.yml
+  include: openstack/create_endpoint.yml
   vars:
     service: network
     region: RegionOne

@@ -5,19 +5,19 @@
   template: src=nofile-limits.conf.j2 dest=/etc/security/limits.d/30-nofile.conf
   tags: limits
 
-## Prepare deployment
+# Prepare deployment
 - include: pre-deploy.yml
-##
-### keystone
+
+# keystone
 - include: keystone.yml
-##
-### glance
+
+# glance
 - include: glance.yml
-##
-### nova
+
+# nova
 - include: nova.yml
-#
-## neutron
+
+# neutron
 - include: neutron.yml
 
 # horizon
@@ -25,6 +25,12 @@
 
 # cinder
 - include: cinder.yml
+
+# swift
+- include: swift.yml
+
+# heat
+- include: heat.yml
 
 # firewall
 - include: firewall.yml

@@ -1,6 +1,6 @@
 ---
 # - name: Create API endpoint for network service
-#   include: endpoint_create.yml
+#   include: openstack/create_endpoint.yml
 #   vars:
 #     service: identity
 #     region: RegionOne

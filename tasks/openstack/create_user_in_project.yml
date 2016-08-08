@@ -1,0 +1,24 @@
+---
+# - include: create_service.yml
+#   vars:
+#     username: glance
+#     password: "{{ openstack_glance_keystone_password }}"
+#   environment: "{{ token_auth_env }}"
+
+- name: 'Check "{{ username }}" user exists'
+  command: openstack user show "{{ username }}"
+  register: userExist
+  ignore_errors: True
+  run_once: True
+  environment: "{{ token_auth_env }}"
+
+- name: 'Create the "{{ username }}" user'
+  command: openstack user create  --domain default --password "{{ password }}"  "{{ username }}"
+  when: userExist|failed
+  run_once: True
+  environment: "{{ token_auth_env }}"
+
+- name: 'Add "{{ role }}" role to the "{{ username }}" user to the {{ project }} project'
+  command: openstack role add --project {{ project }} --user "{{ username }}" "{{ role }}"
+  run_once: True
+  environment: "{{ token_auth_env }}"

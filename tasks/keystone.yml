@@ -76,14 +76,14 @@
 #  service: name=httpd enabled=yes state=restarted
 
 - name: Create the service entity for keystone.
-  include: service_create.yml
+  include: openstack/create_service.yml
   vars:
     name: keystone
     type: identity
     description: OpenStack Identity
 
 - name: Create the API endpoint for keystone.
-  include: endpoint_create.yml
+  include: openstack/create_endpoint.yml
   vars:
     service: identity
     region: RegionOne
@@ -93,31 +93,48 @@
       publicurl: "{{ openstack_endpoint_public_url }}"
 
 # admin
-- name: "Admin credentials: create user, project and role. Link them"
-  include: create_user_credentials.yml
+- name: "Create admin project"
+  include: openstack/create_project.yml
+  vars:
+    project: admin
+    description: "Admin project"
+
+- name: "Create admin role"
+  include: openstack/create_role.yml
+  vars:
+    role: admin
+
+- name: "Create admin user in admin project"
+  include: openstack/create_user_in_project.yml
   vars:
     username: admin
     password: "{{ openstack_admin_password }}"
     project: admin
-    project_description: "Admin project"
     role: admin
-  environment: "{{ token_auth_env }}"
 
 # user
-- name: "User credentials: create user, project and role. Link them"
-  include: create_user_credentials.yml
+- name: "Create demo project"
+  include: openstack/create_project.yml
+  vars:
+    project: "{{ openstack_user_project }}"
+    description: "Demo project"
+
+- name: "Create demo role"
+  include: openstack/create_role.yml
+  vars:
+    role: "{{ openstack_user_role }}"
+
+- name: "Create demo user in demo project"
+  include: openstack/create_user_in_project.yml
   vars:
     username: "{{ openstack_user_name }}"
     password: "{{ openstack_user_password }}"
     project: "{{ openstack_user_project }}"
-    project_description: "Demo project"
     role: "{{ openstack_user_role }}"
-  environment: "{{ token_auth_env }}"
 
 #service
 - name: "Create the service project"
-  command: |
-    openstack project create  --domain default \
-    --description "Service project" service
-  environment: "{{ token_auth_env }}"
-  run_once: True
+  include: openstack/create_project.yml
+  vars:
+    project: service
+    description: "Service project"

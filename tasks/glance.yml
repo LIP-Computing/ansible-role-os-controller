@@ -11,25 +11,23 @@
     db_priv: "{{ openstack_glance_db_name }}.*:ALL"
   tags: database
 
-- name: "Glance credentials: create user, project and role. Link them"
-  include: create_user_credentials.yml
+- name: "Create glance user in service project"
+  include: openstack/create_user_in_project.yml
   vars:
     username: glance
     password: "{{ openstack_glance_keystone_password }}"
-    project: service
-    project_description: "Service project"
     role: admin
-  environment: "{{ token_auth_env }}"
+    project: service
 
 - name: Create the service entity for glance.
-  include: service_create.yml
+  include: openstack/create_service.yml
   vars:
     name: glance
     type: image
     description: OpenStack Image service
 
 - name: Create the API endpoint for glance.
-  include: endpoint_create.yml
+  include: openstack/create_endpoint.yml
   vars:
     service: image
     region: RegionOne

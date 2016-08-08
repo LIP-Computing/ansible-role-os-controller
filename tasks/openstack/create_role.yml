@@ -1,0 +1,18 @@
+---
+# - include: create_role.yml
+#   vars:
+#     role: admin
+#   environment: "{{ token_auth_env }}"
+
+- name: 'Check "{{ role }}" role exists'
+  command: openstack role show "{{ role }}"
+  register: roleExist
+  ignore_errors: True
+  run_once: True
+  environment: "{{ token_auth_env }}"
+
+- name: 'Create the "{{ role }}" role'
+  command: openstack role create "{{ role }}"
+  when: roleExist|failed
+  run_once: True
+  environment: "{{ token_auth_env }}"
