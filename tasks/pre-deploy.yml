@@ -24,7 +24,7 @@
     - yum-plugin-priorities
 
 - name: Install Openstack "{{ openstack_version | default(liberty) }}"  packages
-  yum: name="{{ item }}" state=latest
+  yum: name="{{ item }}" state=latest update_cache=yes
   with_items:
     - centos-release-openstack-{{ openstack_version | default(liberty) }}
 
@@ -33,17 +33,4 @@
   with_items:
     - python-openstackclient
 
-# USEFUL?--->>>>
-- name: Upudate cache and install the openstack-selinux package
-  yum: name="{{ item }}" state=latest update_cache=yes
-   # update_cache=yes
-  with_items:
-    - openstack-selinux
-
-# openstack shade will be used later on in the deploy/config of OS
-- name: pip update and install openstack shade
-  pip: name="{{ item }}" state=latest
-  with_items:
-    - pip
-    - shade
 
