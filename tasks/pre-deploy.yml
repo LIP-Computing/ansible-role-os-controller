@@ -16,6 +16,7 @@
     - mod_wsgi
     - rabbitmq-server
     - iptables
+    - iptables-services
 
 - name: Install yum-plugin-priorities and epel-release
   yum: name="{{ item }}" state=latest
