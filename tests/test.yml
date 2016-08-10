@@ -1,8 +1,5 @@
 ---
 - hosts: localhost
-  # Solve mysql problems in docker
-  environment:
-    TERM: "dumb"
   vars:
     openstack_version: "liberty"
     openstack_controller_host: localhost
