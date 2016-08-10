@@ -10,21 +10,23 @@
     db_password: "{{ openstack_nova_db_password }}"
   tags: database
 
-- name: Create the service user for nova.
-  include: create_service_user.yml
+- name: "Create nova user in service"
+  include: openstack/create_user_in_project.yml
   vars:
     username: nova
     password: "{{ openstack_nova_keystone_password }}"
+    project: service
+    role: admin
 
 - name: Create the service entity for nova.
-  include: service_create.yml
+  include: openstack/create_service.yml
   vars:
     name: nova
     type: compute
     description: OpenStack Compute
 
 - name: Create the API endpoint for nova.
-  include: endpoint_create.yml
+  include: openstack/create_endpoint.yml
   vars:
     service: compute
     region: RegionOne
@@ -45,18 +47,23 @@
     - openstack-nova-scheduler
     - python-novaclient
 
-- name: Copy the configuration files for nova.
-  template: src=nova.conf.j2 dest=/etc/nova/nova.conf
+- name: Deploy nova configuration files from templates
+  template: src={{ item.src }} dest={{ item.dest }} backup=yes
+  with_items:
+    - { src: 'nova/nova.conf.j2', dest: '/etc/nova/nova.conf' }
+    - { src: 'nova/nova-api-paste.ini.j2', dest: '/etc/nova/nova-api-paste.ini'}
   notify: restart nova
 
 - name: DB sync for nova.
-  shell: su -s /bin/sh -c "nova-manage db sync" nova
-  ignore_errors: True
+  shell: nova-manage db sync
+  become_user: nova
   run_once: True
+
+- name: Give permissions to /var/log/nova/nova.log
+  file: path=/var/log/nova/nova.log state=touch mode=0640 owner=nova group=apache
 
 - name: Ensure nova service  is started and enabled on boot.
   service: name={{ item }} enabled=yes state=started
-  ignore_errors: True
   with_items:
     - openstack-nova-api
     - openstack-nova-cert

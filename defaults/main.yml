@@ -10,24 +10,42 @@ openstack_internal_vip: "{{ openstack_controller_host }}"
 openstack_public_vip: "{{ openstack_controller_host }}"
 openstack_os_url: "http://{{ openstack_controller_host }}:35357/v3"
 openstack_os_identity_api_version: "3"
+openstack_ath_uri: "http://{{ openstack_admin_vip }}:5000"
+openstack_ath_url: "http://{{ openstack_admin_vip }}:35357"
 openstack_endpoint_admin_url: "http://{{ openstack_admin_vip }}:35357/v3"
 openstack_endpoint_internal_url: "http://{{ openstack_internal_vip }}:5000/v3"
 openstack_endpoint_public_url: "http://{{ openstack_public_vip }}:5000/v3"
 openstack_database_host: "{{ openstack_controller_host }}"
+openstack_http_port: 80
 
 # auth
 openstack_admin_token: "openstack"
 openstack_admin_user: "admin"
+openstack_admin_project: "admin"
 openstack_admin_password: "openstack"
+openstack_admin_role: "admin"
+
+# rabbitmq variables
+openstack_rabbit_host: localhost
+openstack_rabbit_user: openstack
+openstack_rabbit_pass: 12345
 
 # keystone
 openstack_keystone_db_name: "keystone"
 openstack_keystone_db_user: "keystone"
 openstack_keystone_db_password: "keystone"
-openstack_keystone_config_default_verbose: "True"
+openstack_keystone_config_default_verbose: False
 openstack_keystone_config_token_provider: "uuid"
-openstack_keystone_config_token_driver: "memcache"
+openstack_keystone_config_token_driver: "sql"
 openstack_keystone_config_revoke_driver: "sql"
+#openstack_keystone_service_name: keystone
+openstack_keystone_auth_region: RegionOne
+
+openstack_user_name: "demo"
+openstack_user_project: "demo"
+openstack_user_password: "userpass"
+openstack_user_role: "user"
+
 
 # glance
 openstack_glance_keystone_password: "openstack"
@@ -46,6 +64,7 @@ openstack_nova_db_password: "nova"
 openstack_nova_adminurl: "http://{{ openstack_admin_vip }}:8774/v2/%\\(tenant_id\\)s"
 openstack_nova_intelnalurl: "http://{{ openstack_internal_vip }}:8774/v2/%\\(tenant_id\\)s"
 openstack_nova_publicurl: "http://{{ openstack_public_vip }}:8774/v2/%\\(tenant_id\\)s"
+
 
 # neutron controller
 openstack_neutron_keystone_password: "openstack"
@@ -86,3 +105,25 @@ admin_auth_env:
   OS_AUTH_URL: "{{ openstack_os_url }}"
   OS_IDENTITY_API_VERSION: "{{ openstack_os_identity_api_version }}"
 
+# swift
+openstack_swift_keystone_password: "openstack"
+openstack_swift_adminurl: "http://{{ openstack_admin_vip }}:8080/v1"
+openstack_swift_internalurl: "http://{{ openstack_internal_vip }}:8080/v1/AUTH_%\\(tenant_id\\)s"
+openstack_swift_publicurl: "http://{{ openstack_public_vip }}:8080/v1/AUTH_%\\(tenant_id\\)s"
+openstack_swift_prefix: "prefix"
+openstack_swift_suffix: "suffix"
+
+# heat
+openstack_heat_keystone_password: "openstack"
+openstack_heat_db_name: "heat"
+openstack_heat_db_user: "heat"
+openstack_heat_db_password: "heat"
+openstack_heat_domain_password : "heat"
+openstack_heat_adminurl: "http://{{ openstack_admin_vip }}:8004/v1/%\\(tenant_id\\)s"
+openstack_heat_intelnalurl: "http://{{ openstack_internal_vip }}:8004/v1/%\\(tenant_id\\)s"
+openstack_heat_publicurl: "http://{{ openstack_public_vip }}:8004/v1/%\\(tenant_id\\)s"
+
+openstack_heat_server_url: "http://{{ openstack_admin_vip }}:8000"
+openstack_heat_cfn_adminurl: "http://{{ openstack_admin_vip }}:8000/v1"
+openstack_heat_cfn_intelnalurl: "http://{{ openstack_internal_vip }}:8000/v1"
+openstack_heat_cfn_publicurl: "http://{{ openstack_public_vip }}:8000/v1"

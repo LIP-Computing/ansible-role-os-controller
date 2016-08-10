@@ -11,15 +11,14 @@
     db_priv: "{{ openstack_keystone_db_name }}.*:ALL"
   tags: database
 
-- name: Install OpenStack keystone packages.
-  yum: name={{ item }} state=installed
+- name: Install OpenStack keystone package.
+  yum: name={{ item }} state=latest
   with_items:
     - openstack-keystone
-    - python-keystoneclient
-    - httpd
-    - mod_wsgi
-    - python-memcached
+  retries: 2
+  delay: 5
 
+#http
 - name: Configure httpd Listen Port.
   lineinfile: >
     dest=/etc/httpd/conf/httpd.conf
@@ -27,39 +26,64 @@
     line="{{ item.line }}"
     state=present
   with_items:
-    - { regexp: "^#?Listen", line: "Listen {{ mgmt_ip }}:80" }
+    - { regexp: "^#?Listen", line: "Listen {{ openstack_http_port }}" }
 
-- name: Copy the configuration files for keystone.
-  template: src=keystone.conf.j2 dest=/etc/keystone/keystone.conf
-  #notify: restart keystone
-
-- name: Copy the configuration files for keystone wsgi.
-  template: src=wsgi-keystone.conf.j2 dest=/etc/httpd/conf.d/wsgi-keystone.conf
-  notify: restart httpd
-  
-- name: Ensure keystone is started and enabled on boot.
+- name: Start http daemon.
   service: "name={{ item }} state=started enabled=yes"
   with_items:
     - httpd
 
+#rabbit
+- name: Service rabbitmq
+  service: name=rabbitmq-server enabled=yes state=restarted
+
+- name: rabbitmq user setup
+  rabbitmq_user: user={{ openstack_rabbit_user }}
+                 password={{ openstack_rabbit_pass }}
+                 vhost=/
+                 configure_priv=.*
+                 read_priv=.*
+                 write_priv=.*
+                 state=present
+
+- name: Deploy keyston configuration files from templates
+  template: src={{ item.src }} dest={{ item.dest }} mode=0640 owner=keystone group=apache backup=yes
+  with_items:
+    - { src: 'keystone/keystone-dist-paste.ini.j2', dest: '/etc/keystone/keystone-dist-paste.ini' }
+    - { src: 'keystone/keystone.conf.j2', dest: '/etc/keystone/keystone.conf' }
+#    - { src: 'keystone/policy.json.j2', dest: '/etc/keystone/policy.json' } MAKE PROBLEMS
+    - { src: 'keystone/wsgi-keystone.conf.j2', dest: '/etc/httpd/conf.d/wsgi-keystone.conf' }
+
+- name: Service http
+  service: name=httpd enabled=yes state=restarted
+
 - name: Waiting for keystone service is started.
   wait_for: "host={{ openstack_controller_host }} port=35357 delay=10 timeout=30"
+  run_once: true
+
+- name: Give permissions to keystone.log
+  file: path=/var/log/keystone/keystone.log state=touch mode=0640 owner=keystone group=apache
+
+- name:  Create keystone tables in DB
+  shell: keystone-manage db_sync
+  become_user: keystone
   run_once: True
 
-- name: DB sync for keystone.
-  shell: su -s /bin/sh -c "keystone-manage db_sync" keystone
-  ignore_errors: True
-  run_once: True
+#- name: Initialize fernet tokens
+#  command: keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
+#
+#- name: Service http
+#  service: name=httpd enabled=yes state=restarted
 
 - name: Create the service entity for keystone.
-  include: service_create.yml
+  include: openstack/create_service.yml
   vars:
     name: keystone
     type: identity
     description: OpenStack Identity
 
 - name: Create the API endpoint for keystone.
-  include: endpoint_create.yml
+  include: openstack/create_endpoint.yml
   vars:
     service: identity
     region: RegionOne
@@ -69,38 +93,48 @@
       publicurl: "{{ openstack_endpoint_public_url }}"
 
 # admin
-- name: "Ensure the 'admin' project exists"
-  keystone_user: >
-    tenant=admin
-    tenant_description="Admin Project"
-    token={{ openstack_admin_token }}
-    endpoint={{ openstack_endpoint_admin_url }}
-  run_once: True
+- name: "Create admin project"
+  include: openstack/create_project.yml
+  vars:
+    project: admin
+    description: "Admin project"
 
-- name: "Ensure the 'admin' user exists"
-  keystone_user: >
-    user=admin
-    password={{ openstack_admin_password }}
-    tenant=admin
-    token={{ openstack_admin_token }}
-    endpoint={{ openstack_endpoint_admin_url }}
-  run_once: True
+- name: "Create admin role"
+  include: openstack/create_role.yml
+  vars:
+    role: admin
 
-- name: "Ensure the 'admin' role exists"
-  keystone_user: >
-    role=admin
-    user=admin
-    tenant=admin
-    token={{ openstack_admin_token }}
-    endpoint={{ openstack_endpoint_admin_url }}
-  run_once: True
+- name: "Create admin user in admin project"
+  include: openstack/create_user_in_project.yml
+  vars:
+    username: admin
+    password: "{{ openstack_admin_password }}"
+    project: admin
+    role: admin
 
-# service
-- name: "Ensure the 'service' project exists"
-  keystone_user: >
-    tenant=service
-    tenant_description="Service Project"
-    token={{ openstack_admin_token }}
-    endpoint={{ openstack_endpoint_admin_url }}
-  run_once: True
+# user
+- name: "Create demo project"
+  include: openstack/create_project.yml
+  vars:
+    project: "{{ openstack_user_project }}"
+    description: "Demo project"
 
+- name: "Create demo role"
+  include: openstack/create_role.yml
+  vars:
+    role: "{{ openstack_user_role }}"
+
+- name: "Create demo user in demo project"
+  include: openstack/create_user_in_project.yml
+  vars:
+    username: "{{ openstack_user_name }}"
+    password: "{{ openstack_user_password }}"
+    project: "{{ openstack_user_project }}"
+    role: "{{ openstack_user_role }}"
+
+#service
+- name: "Create the service project"
+  include: openstack/create_project.yml
+  vars:
+    project: service
+    description: "Service project"

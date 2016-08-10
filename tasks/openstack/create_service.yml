@@ -7,9 +7,7 @@
 #     description:
 
 - name: 'Create keystone service "{{ name }}"'
-  shell: |
-    openstack service create --name {{ name }} --description "{{ description }}" {{ type }}
-
-  environment: token_auth_env
+  shell: openstack service create --name {{ name }} --description "{{ description }}" {{ type }}
+  environment: "{{ token_auth_env }}"
   run_once: True
 

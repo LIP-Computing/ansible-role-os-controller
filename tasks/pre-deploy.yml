@@ -2,35 +2,36 @@
 # Pre deployment tasks
 
 - name: Install required packages
-  yum: name="{{ item }}" state=latest
+  yum: name="{{ item }}" state=latest update_cache=yes
   with_items:
     - curl
     - git
     - python-devel
     - python-pip
     - tar
+    - bind-utils
     - wget
+    - httpd
+    - memcached
+    - mod_wsgi
+    - rabbitmq-server
+    - iptables
+    - iptables-services
 
 - name: Install yum-plugin-priorities and epel-release
   yum: name="{{ item }}" state=latest
   with_items:
-    - yum-plugin-priorities
     - epel-release
+    - yum-plugin-priorities
 
-- name: Install Openstack {{ openstack_version | default(liberty) }}  packages
-  yum: name="{{ item }}" state=latest
+- name: Install Openstack "{{ openstack_version | default(liberty) }}"  packages
+  yum: name="{{ item }}" state=latest update_cache=yes
   with_items:
     - centos-release-openstack-{{ openstack_version | default(liberty) }}
 
-- name: Upudate cache and install the openstack-selinux package
+- name: Install python-openstackclient
   yum: name="{{ item }}" state=latest
-   # update_cache=yes
   with_items:
-    - openstack-selinux
+    - python-openstackclient
 
-# openstack shade will be used later on in the deploy/config of OS
-- name: pip update and install openstack shade
-  pip: name={{ item }} state=latest
-  with_items:
-    - pip
-    - shade
+

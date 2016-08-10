@@ -11,21 +11,23 @@
     db_priv: "{{ openstack_glance_db_name }}.*:ALL"
   tags: database
 
-- name: Create the service user for glance.
-  include: create_service_user.yml
+- name: "Create glance user in service project"
+  include: openstack/create_user_in_project.yml
   vars:
     username: glance
     password: "{{ openstack_glance_keystone_password }}"
+    role: admin
+    project: service
 
 - name: Create the service entity for glance.
-  include: service_create.yml
+  include: openstack/create_service.yml
   vars:
     name: glance
     type: image
     description: OpenStack Image service
 
 - name: Create the API endpoint for glance.
-  include: endpoint_create.yml
+  include: openstack/create_endpoint.yml
   vars:
     service: image
     region: RegionOne
@@ -42,20 +44,25 @@
     - python-glance
     - python-glanceclient
 
-- name: Copy the configuration files for glance-api.
-  template: src=glance-api.conf.j2 dest=/etc/glance/glance-api.conf
-  notify: restart glance-api
-
-- name: Copy the configuration files for glance-registry.
-  template: src=glance-registry.conf.j2 dest=/etc/glance/glance-registry.conf
+- name: Deploy glance configuration files from templates
+  template: src={{ item.src }} dest={{ item.dest }} backup=yes
+  with_items:
+    - { src: 'glance/glance-api.conf.j2', dest: '/etc/glance/glance-api.conf' }
+    - { src: 'glance/glance-registry.conf.j2', dest: '/etc/glance/glance-registry.conf'}
+    - { src: 'glance/glance-api-paste.ini.j2', dest: '/etc/glance/glance-api-paste.ini' }
+    - { src: 'glance/glance-registry-paste.ini.j2', dest: '/etc/glance/glance-registry-paste.ini' }
+#    - { src: 'glance/policy.json.j2', dest: '/etc/glance/policy.json' }  TODO(jorgesece): check it
   notify: restart glance-registry
 
-- name: DB sync for glance.
-  shell: su -s /bin/sh -c "glance-manage db_sync" glance
-  ignore_errors: True
+- name: Give permissions to /var/log/glance/api.log
+  file: path=/var/log/glance/api.log state=touch mode=0640 owner=glance group=apache
+
+- name:  Create keystone tables in DB
+  shell: glance-manage db_sync
+  become_user: glance
   run_once: True
 
-- name: Ensure images service  is started and enabled on boot
+- name: Ensure images service is started and enabled on boot
   service: name={{ item }} enabled=yes state=started
   with_items:
   - openstack-glance-api

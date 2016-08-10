@@ -10,28 +10,31 @@
     db_password: "{{ openstack_cinder_db_password }}"
   tags: database
 
-- name: Create the service user for cinder.
-  include: create_service_user.yml
+- name: "Create cinder user in service project"
+  include: openstack/create_user_in_project.yml
   vars:
     username: cinder
     password: "{{ openstack_cinder_user_password }}"
+    role: admin
+    project: service
+  environment: "{{ token_auth_env }}"
 
 - name: Create the service entity for cinder.
-  include: service_create.yml
+  include: openstack/create_service.yml
   vars:
     name: cinder
     type: volume
     description: OpenStack Block Storage
 
 - name: Create the service entity for cinderv2.
-  include: service_create.yml
+  include: openstack/create_service.yml
   vars:
     name: cinderv2
     type: volumev2
     description: OpenStack Block Storage
 
 - name: Create the API endpoint for volume.
-  include: endpoint_create.yml
+  include: openstack/create_endpoint.yml
   vars:
     service: volume
     region: RegionOne
@@ -41,7 +44,7 @@
       publicurl: "{{ openstack_cinder_publicurl_v1 }}"
 
 - name: Create the API endpoint for volumev2.
-  include: endpoint_create.yml
+  include: openstack/create_endpoint.yml
   vars:
     service: volumev2
     region: RegionOne
@@ -58,12 +61,12 @@
     - python-cinderclient
 
 - name: Copy the configuration files for cinder.
-  template: src=cinder.conf.j2 dest=/etc/cinder/cinder.conf
+  template: src=cinder/cinder.conf.j2 dest=/etc/cinder/cinder.conf
   notify: restart cinder
 
 - name: DB sync for cinder.
-  shell: su -s /bin/sh -c "cinder-manage db sync" cinder
-  ignore_errors: True
+  shell: cinder-manage db sync
+  become_user: cinder
   run_once: True
 
 - name: Ensure cinder service is started and enabled on boot.

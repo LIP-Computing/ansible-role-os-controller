@@ -1,0 +1,117 @@
+---
+# tasks file for heat
+
+# Prerequisites
+- name: Prepare Database for heat.
+  include: database.yml
+  vars:
+    db_name: "{{ openstack_heat_db_name }}"
+    db_user: "{{ openstack_heat_db_user }}"
+    db_password: "{{ openstack_heat_db_password }}"
+  tags: database
+
+- name: Create user for heat service.
+  include: openstack/create_user_in_project.yml
+  vars:
+    username: heat
+    password: "{{ openstack_heat_keystone_password }}"
+    project: service
+    role: admin
+  environment: "{{ token_auth_env }}"
+
+- name: Create the service entity for heat.
+  include: openstack/create_service.yml
+  vars:
+    name: heat
+    type: orchestration
+    description: OpenStack Orchestration
+
+- name: Create the service entity for heat.
+  include: openstack/create_service.yml
+  vars:
+    name: heat-cfn
+    type: cloudformation
+    description: OpenStack cloudformation
+
+- name: Create the API endpoint for heat.
+  include: openstack/create_endpoint.yml
+  vars:
+    service: orchestration
+    region: RegionOne
+    endpoints:
+      adminurl: "{{ openstack_heat_adminurl }}"
+      internalurl: "{{ openstack_heat_intelnalurl }}"
+      publicurl: "{{ openstack_heat_publicurl }}"
+
+- name: Create the API endpoint for heat-cfn.
+  include: openstack/create_endpoint.yml
+  vars:
+    service: cloudformation
+    region: RegionOne
+    endpoints:
+      adminurl: "{{ openstack_heat_cfn_adminurl }}"
+      internalurl: "{{ openstack_heat_cfn_intelnalurl }}"
+      publicurl: "{{ openstack_heat_cfn_publicurl }}"
+
+- name: Create heat domain
+  include: openstack/create_domain.yml
+  vars:
+    domain: heat
+    description: "Stack projects and users"
+  environment: "{{ token_auth_env }}"
+
+- name: Create the heat_domain_admin user to manage in the heat domain
+  include: openstack/create_user.yml
+  vars:
+    password: "{{ openstack_heat_domain_password }}"
+    username: heat_domain_admin
+  environment: "{{ token_auth_env }}"
+
+- name:  Add role to the heat_domain_admin user in the heat domain
+  command: openstack role add --domain heat --user heat_domain_admin admin
+  environment: "{{ token_auth_env }}"
+
+- name:  Create role create heat_stack_owner
+  include: openstack/create_role.yml
+  vars:
+    role: heat_stack_owner
+  environment: "{{ token_auth_env }}"
+
+- name: Add role to project demo.
+  command: openstack role add --project "{{ openstack_user_project }}" --user "{{ openstack_user_name }}" heat_stack_owner
+  environment: "{{ token_auth_env }}"
+
+- name:  Create role heat_stack_user
+  include: openstack/create_role.yml
+  vars:
+    role: heat_stack_user
+  environment: "{{ token_auth_env }}"
+
+
+
+# Install and configure
+- name: Install OpenStack heat packages.
+  yum: name={{ item }} state=latest
+  with_items:
+    - openstack-heat-api
+    - openstack-heat-api-cfn
+    - openstack-heat-engine
+    - python-heatclient
+
+- name: Deploy heat configuration files from templates
+  template: src={{ item.src }} dest={{ item.dest }} backup=yes
+  with_items:
+    - { src: 'heat/heat.conf.j2', dest: '/etc/heat/heat.conf' }
+
+- name: DB sync for heat.
+  shell: heat-manage db_sync
+  become_user: heat
+  run_once: True
+
+- name: Ensure neutron service is started and enabled on boot.
+  service: name={{ item }} enabled=yes state=started
+  ignore_errors: True
+  with_items:
+    - openstack-heat-api
+    - openstack-heat-api-cfn
+    - openstack-heat-engine

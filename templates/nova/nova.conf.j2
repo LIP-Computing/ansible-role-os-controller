@@ -2,16 +2,13 @@
 rpc_backend = rabbit
 auth_strategy = keystone
 
-my_ip = {{ mgmt_ip }}
+my_ip = {{ openstack_ip }}
 network_api_class = nova.network.neutronv2.api.API
 security_group_api = neutron
 linuxnet_interface_driver = nova.network.linux_net.NeutronLinuxBridgeInterfaceDriver
 firewall_driver = nova.virt.firewall.NoopFirewallDriver
 
-vncserver_listen = $my_ip
-vncserver_proxyclient_address = $my_ip
-
-enabled_apis=osapi_compute,metadata
+enabled_apis=ec2,osapi_compute,metadata
 verbose = True
 
 memcached_servers={{ openstack_memcached_servers }}
@@ -73,7 +70,7 @@ memcached_servers={{ openstack_memcached_servers }}
 
 # The messaging driver to use, defaults to rabbit. Other drivers include qpid
 # and zmq. (string value)
-#rpc_backend=rabbit
+rpc_backend=rabbit
 
 # The default exchange under which topics are scoped. May be overridden by an
 # exchange name specified in the transport_url option. (string value)
@@ -188,7 +185,7 @@ memcached_servers={{ openstack_memcached_servers }}
 
 # Top-level directory for maintaining nova's state (string
 # value)
-#state_path=/var/lib/nova
+state_path=/var/lib/nova
 
 
 #
@@ -288,7 +285,7 @@ memcached_servers={{ openstack_memcached_servers }}
 # The IP address on which the EC2 API will listen. (string
 # value)
 #ec2_listen=0.0.0.0
-ec2_listen={{ mgmt_ip }}
+ec2_listen={{ openstack_controller_host }}
 
 # The port on which the EC2 API will listen. (integer value)
 #ec2_listen_port=8773
@@ -300,7 +297,7 @@ ec2_listen={{ mgmt_ip }}
 # The IP address on which the OpenStack API will listen.
 # (string value)
 #osapi_compute_listen=0.0.0.0
-osapi_compute_listen={{ mgmt_ip }}
+osapi_compute_listen={{ openstack_controller_host }}
 
 # The port on which the OpenStack API will listen. (integer
 # value)
@@ -316,7 +313,7 @@ osapi_compute_listen={{ mgmt_ip }}
 # The IP address on which the metadata API will listen.
 # (string value)
 #metadata_listen=0.0.0.0
-metadata_listen={{ mgmt_ip }}
+metadata_listen={{ openstack_controller_host }}
 
 # The port on which the metadata API will listen. (integer
 # value)
@@ -382,7 +379,7 @@ metadata_listen={{ mgmt_ip }}
 
 # File name for the paste.deploy config for nova-api (string
 # value)
-#api_paste_config=api-paste.ini
+api_paste_config=nova-api-paste.ini
 
 # A python format string that is used as the template to
 # generate log lines. The following values can be formatted
@@ -694,7 +691,7 @@ metadata_listen={{ mgmt_ip }}
 
 # Host on which to listen for incoming requests (string value)
 #novncproxy_host=0.0.0.0
-novncproxy_host={{ mgmt_ip }}
+novncproxy_host={{ openstack_controller_host }}
 
 # Port on which to listen for incoming requests (integer
 # value)
@@ -1383,6 +1380,8 @@ novncproxy_host={{ mgmt_ip }}
 #
 # From oslo.log
 #
+#debug=true
+log_file=/var/log/nova/nova.log
 
 # Print debugging output (set logging level to DEBUG instead of default WARNING
 # level). (boolean value)
@@ -1936,6 +1935,10 @@ novncproxy_host={{ mgmt_ip }}
 # value)
 #fatal_deprecations=false
 
+[vnc]
+vncserver_listen = $my_ip
+vncserver_proxyclient_address = $my_ip
+
 
 [api_database]
 
@@ -2207,7 +2210,7 @@ os_region_name = RegionOne
 
 
 [database]
-connection = mysql://nova:{{ openstack_nova_db_password }}@{{ openstack_database_host }}/nova
+connection = "mysql+pymysql://nova:{{ openstack_nova_db_password }}@{{ openstack_database_host }}/nova"
 
 #
 # From oslo.db
@@ -2560,8 +2563,8 @@ host = {{ openstack_controller_host }}
 
 
 [keystone_authtoken]
-auth_uri = {{ openstack_keystone_auth_uri }}
-auth_url = {{ openstack_keystone_auth_url }}
+auth_uri = {{ openstack_ath_uri }}
+auth_url = {{ openstack_ath_url }}
 auth_plugin = password
 project_domain_id = default
 user_domain_id = default
@@ -3052,7 +3055,7 @@ password = {{ openstack_nova_keystone_password }}
 
 [neutron]
 url = http://{{ openstack_controller_host }}:9696
-auth_url = {{ openstack_keystone_auth_url }}
+auth_url = {{ openstack_ath_url }}
 auth_plugin = password
 project_domain_id = default
 user_domain_id = default
@@ -3947,18 +3950,12 @@ lock_path = /var/lib/nova/tmp
 
 
 [oslo_messaging_rabbit]
-{% if openstack_rabbit_hosts %}
-rabbit_hosts = {{ openstack_rabbit_hosts }}
-rabbit_retry_interval=1
-rabbit_retry_backoff=2
-rabbit_max_retries=0
-rabbit_durable_queues=true
-rabbit_ha_queues=true
-{% elif openstack_rabbit_host %}
+
 rabbit_host = {{ openstack_rabbit_host }}
-{% endif %}
-rabbit_userid = {{ openstack_rabbit_userid }}
-rabbit_password = {{ openstack_rabbit_password }}
+
+rabbit_userid = {{ openstack_rabbit_user }}
+rabbit_password = {{ openstack_rabbit_pass }}
+
 
 #
 # From oslo.messaging
