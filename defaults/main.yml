@@ -107,8 +107,8 @@ admin_auth_env:
 # swift
 openstack_swift_keystone_password: "openstack"
 openstack_swift_adminurl: "http://{{ openstack_admin_vip }}:8080/v1"
-openstack_swift_internalurl: http://"{{ openstack_internal_vip }}":8080/v1/AUTH_%\(tenant_id\)s
-openstack_swift_publicurl: http://"{{ openstack_public_vip }}":8080/v1/AUTH_%\(tenant_id\)s
+openstack_swift_internalurl: "http://{{ openstack_internal_vip }}:8080/v1/AUTH_%\\(tenant_id\\)s"
+openstack_swift_publicurl: "http://{{ openstack_public_vip }}:8080/v1/AUTH_%\\(tenant_id\\)s"
 openstack_swift_prefix: "prefix"
 openstack_swift_suffix: "suffix"
 
@@ -118,11 +118,11 @@ openstack_heat_db_name: "heat"
 openstack_heat_db_user: "heat"
 openstack_heat_db_password: "heat"
 openstack_heat_domain_password : "heat"
-openstack_heat_adminurl: http://"{{ openstack_admin_vip }}":8004/v1/%\(tenant_id\)s
-openstack_heat_intelnalurl: http://"{{ openstack_internal_vip }}":8004/v1/%\(tenant_id\)s
-openstack_heat_publicurl: http://"{{ openstack_public_vip }}":8004/v1/%\(tenant_id\)s
+openstack_heat_adminurl: "http://{{ openstack_admin_vip }}:8004/v1/%\\(tenant_id\\)s"
+openstack_heat_intelnalurl: "http://{{ openstack_internal_vip }}:8004/v1/%\\(tenant_id\\)s"
+openstack_heat_publicurl: "http://{{ openstack_public_vip }}:8004/v1/%\\(tenant_id\\)s"
 
-openstack_heat_server_url: http://"{{ openstack_admin_vip }}":8000
-openstack_heat_cfn_adminurl: http://"{{ openstack_admin_vip }}":8000/v1
-openstack_heat_cfn_intelnalurl: http://"{{ openstack_internal_vip }}":8000/v1
-openstack_heat_cfn_publicurl: http://"{{ openstack_public_vip }}":8000/v1
+openstack_heat_server_url: "http://{{ openstack_admin_vip }}:8000"
+openstack_heat_cfn_adminurl: "http://{{ openstack_admin_vip }}:8000/v1"
+openstack_heat_cfn_intelnalurl: "http://{{ openstack_internal_vip }}:8000/v1"
+openstack_heat_cfn_publicurl: "http://{{ openstack_public_vip }}:8000/v1"

@@ -29,7 +29,7 @@ password = {{ openstack_heat_keystone_password }}
 auth_plugin = password
 auth_url = {{ openstack_ath_url }}
 username = heat
-password = HEAT_PASS
+password = {{ openstack_heat_keystone_password }}
 user_domain_id = default
 
 [clients_keystone]
