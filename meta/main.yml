@@ -1,6 +1,6 @@
 galaxy_info:
   author: mariojmdavid@gmail.com
-  description: Openstack Mitaka controller
+  description: Openstack controller
   company: LIP and INDIGO-DataCloud
   license: Apache
   min_ansible_version: 2.0
