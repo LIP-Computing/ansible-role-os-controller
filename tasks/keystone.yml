@@ -26,7 +26,7 @@
     line="{{ item.line }}"
     state=present
   with_items:
-    - { regexp: "^#?Listen", line: "Listen {{ openstack_controller_host }}:80" }
+    - { regexp: "^#?Listen", line: "Listen {{ openstack_http_port }}" }
 
 - name: Start http daemon.
   service: "name={{ item }} state=started enabled=yes"
