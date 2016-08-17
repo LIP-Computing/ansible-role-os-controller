@@ -9,8 +9,6 @@ This ansible role provide the installation and configuration of the controllers 
 * neutron
 * horizon
 * cinder
-* swift (task under testing)
-* heat (task under testing)
 
 In addition, it installs and configures the required the software dependencies, and configure the firewall.
 It have been tested with Openstack Liberty on Centos 7

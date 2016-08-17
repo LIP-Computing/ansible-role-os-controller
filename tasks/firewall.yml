@@ -15,4 +15,4 @@
   tags: firewall
 
 - name: Restart iptables.
-  service: name=iptables enabled=yes state=started
+  service: name=iptables state=restarted
