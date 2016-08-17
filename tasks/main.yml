@@ -26,11 +26,5 @@
 # cinder
 - include: cinder.yml
 
-# swift
-- include: swift.yml
-
-# heat
-- include: heat.yml
-
 # firewall
 - include: firewall.yml
