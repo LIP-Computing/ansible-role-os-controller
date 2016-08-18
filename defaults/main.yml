@@ -26,7 +26,7 @@ openstack_admin_password: "openstack"
 openstack_admin_role: "admin"
 
 # rabbitmq variables
-openstack_rabbit_host: localhost
+openstack_rabbit_host: "{{ openstack_controller_host }}"
 openstack_rabbit_user: openstack
 openstack_rabbit_pass: 12345
 
@@ -104,3 +104,4 @@ admin_auth_env:
   OS_PASSWORD: "{{ openstack_admin_password }}"
   OS_AUTH_URL: "{{ openstack_os_url }}"
   OS_IDENTITY_API_VERSION: "{{ openstack_os_identity_api_version }}"
+
