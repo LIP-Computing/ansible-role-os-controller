@@ -1,0 +1,50 @@
+---
+# tasks file for nova compute
+
+# Install
+- name: Install OpenStack compute node packages.
+  yum: name={{ item }} state=latest
+  with_items:
+    - openstack-nova-compute
+    - sysfsutils
+
+- name: Check not support hardware acceleration.
+  shell: egrep -c '(vmx|svm)' /proc/cpuinfo
+  register: result
+  run_once: True
+  ignore_errors: True
+
+- name: Configure libvirt to use QEMU instead of KVM
+  when: result | failed
+  lineinfile: >
+    dest='/etc/nova/nova.conf'
+    regexp="{{ item.regexp }}"
+    line="{{ item.line }}"
+    state=present
+  with_items:
+    - { regexp: "^#?virt_type", line: "virt_type = qemu" }
+
+- name: Configure compute node in nova.conf
+  when: "{{ local_compute_node }}"
+  lineinfile: >
+    dest='/etc/nova/nova.conf'
+    regexp="{{ item.regexp }}"
+    line="{{ item.line }}"
+    state=present
+  with_items:
+    - { regexp: "^#?novncproxy_base_url", line: "novncproxy_base_url = http://{{openstack_controller_host}}:6080/vnc_auto.html" }
+    - { regexp: "^#?vncserver_proxyclient_address", line: "vncserver_proxyclient_address = {{ openstack_controller_host }}" }
+
+- name: Install network components
+  yum: name={{ item }} state=installed
+  with_items:
+     - openstack-neutron
+     - openstack-neutron-linuxbridge
+     - ebtables
+     - ipset
+
+- name: Ensure nova service is started and enabled on boot.
+  service: name={{ item }} enabled=yes state=started
+  with_items:
+    - libvirtd
+    - openstack-nova-compute

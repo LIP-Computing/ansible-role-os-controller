@@ -34,7 +34,7 @@ Among all the configurable variable, we have used those for testing:
       openstack_keystone_config_revoke_driver: "sql"
       mysql_root_username: "{{ openstack_database_root }}"
       mysql_root_password: "{{ openstack_database_root_password }}"
-      openstack_ip: 10.0.0.11
+      openstack_controller_ip: 10.0.0.11
       openstack_memcached_servers: localhost:11211
       openstack_libvirt_secret_uuid: "secret"
 
@@ -58,7 +58,7 @@ Example Playbook
         openstack_keystone_config_revoke_driver: "sql"
         mysql_root_username: "{{ openstack_database_root }}"
         mysql_root_password: "{{ openstack_database_root_password }}"
-        openstack_ip: 10.0.0.11
+        openstack_controller_ip: 10.0.0.11
         openstack_memcached_servers: localhost:11211
         openstack_libvirt_secret_uuid: "secret"
     

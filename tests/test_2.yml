@@ -4,17 +4,22 @@
     TERM: "dumb"
   vars:
     openstack_version: "liberty"
-    openstack_controller_host: localhost
+    openstack_controller_host: "localhost"
     openstack_admin_token: "openstack"
     openstack_admin_password: "openstack"
+    openstack_database_host: localhost
     openstack_database_root: "root"
     openstack_database_root_password: "root"
     openstack_keystone_config_revoke_driver: "sql"
     mysql_root_username: "{{ openstack_database_root }}"
     mysql_root_password: "{{ openstack_database_root_password }}"
-    openstack_ip: localhost
+    openstack_controller_ip: 127.0.0.1
+    openstack_cidr: 127.0.0.0/24
     openstack_memcached_servers: localhost:11211
+    openstack_neutron_public_interface: "eth0"
     openstack_libvirt_secret_uuid: "secret"
+#    openstack_compute_node_host: compute1
+    local_compute_node: True
 
   roles:
     #- geerlingguy.mysql

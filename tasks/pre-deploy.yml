@@ -34,4 +34,14 @@
   with_items:
     - python-openstackclient
 
+# todo(jorgesece): move to new role
+- name: Set hostame to "{{ openstack_controller_host }}"
+  when: not "{{ local_compute_node }}"
+  shell: hostnamectl set-hostname "{{ openstack_controller_host }}"
 
+
+- name: Copy host file
+  when: not "{{ local_compute_node }}"
+  template: src={{ item.src }} dest={{ item.dest }} backup=yes
+  with_items:
+    - { src: 'neutron/hosts.j2', dest: '/etc/hosts'}

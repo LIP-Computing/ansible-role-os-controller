@@ -36,7 +36,7 @@
 
 #rabbit
 - name: Service rabbitmq
-  service: name=rabbitmq-server enabled=yes state=restarted
+  service: name=rabbitmq-server enabled=yes state=started
 
 - name: rabbitmq user setup
   rabbitmq_user: user={{ openstack_rabbit_user }}
