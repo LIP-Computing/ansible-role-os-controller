@@ -1,8 +1,7 @@
 [ml2]
-type_drivers = flat,vlan
-tenant_network_types =
-mechanism_drivers = linuxbridge
-extension_drivers = port_security
+type_drivers = flat,vlan,gre,vxlan
+tenant_network_types = vlan,gre,vxlan
+mechanism_drivers = openvswitch,l2population
 
 # (ListOpt) List of network type driver entrypoints to be loaded from
 # the neutron.ml2.type_drivers namespace.
@@ -65,7 +64,7 @@ extension_drivers = port_security
 # Example: external_network_type = local
 
 [ml2_type_flat]
-flat_networks = public
+flat_networks = external
 
 # (ListOpt) List of physical_network names with which flat networks
 # can be created. Use * to allow flat networks with arbitrary
@@ -76,7 +75,7 @@ flat_networks = public
 # Example:flat_networks = *
 
 [ml2_type_vlan]
-network_vlan_ranges = public
+network_vlan_ranges = public,vlan
 
 # (ListOpt) List of <physical_network>[:<vlan_min>:<vlan_max>] tuples
 # specifying physical_network names usable for VLAN provider and
@@ -89,12 +88,17 @@ network_vlan_ranges = public
 [ml2_type_gre]
 # (ListOpt) Comma-separated list of <tun_min>:<tun_max> tuples enumerating ranges of GRE tunnel IDs that are available for tenant network allocation
 # tunnel_id_ranges =
+tunnel_id_ranges = 1:16384
 
 [ml2_type_vxlan]
 # (ListOpt) Comma-separated list of <vni_min>:<vni_max> tuples enumerating
 # ranges of VXLAN VNI IDs that are available for tenant network allocation.
 #
 # vni_ranges =
+
+[ml2_type_vxlan]
+vni_ranges = 1:32768
+####vxlan_group = 239.1.1.1
 
 # (StrOpt) Multicast group for the VXLAN interface. When configured, will
 # enable sending all broadcast traffic to this multicast group. When left
@@ -118,8 +122,18 @@ network_vlan_ranges = public
 #
 # max_header_size =
 # Example: max_header_size = 50 (Geneve headers with no additional options)
+[ovs]
+local_ip = {{ openstack_controller_ip }}
+enable_tunneling = True
+bridge_mappings = vlan:{{ openstack_neutron_private_interface }},external:{{ openstack_neutron_public_interface }}
+
+[agent]
+l2_population = True
+tunnel_types = gre,vxlan
 
 [securitygroup]
+firewall_driver = neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
+enable_securitya_group = True
 enable_ipset = True
 
 # Controls if neutron security group is enabled or not.
@@ -129,3 +143,5 @@ enable_ipset = True
 # Use ipset to speed-up the iptables security groups. Enabling ipset support
 # requires that ipset is installed on L2 agent node.
 # enable_ipset = True
+
+

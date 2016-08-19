@@ -15,7 +15,7 @@
   ignore_errors: True
 
 - name: Configure libvirt to use QEMU instead of KVM
-  when: result | failed
+  #when: result | failed
   lineinfile: >
     dest='/etc/nova/nova.conf'
     regexp="{{ item.regexp }}"
@@ -39,9 +39,6 @@
   yum: name={{ item }} state=installed
   with_items:
      - openstack-neutron
-     - openstack-neutron-linuxbridge
-     - ebtables
-     - ipset
 
 - name: Ensure nova service is started and enabled on boot.
   service: name={{ item }} enabled=yes state=started

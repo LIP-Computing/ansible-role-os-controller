@@ -5,10 +5,10 @@ auth_strategy = keystone
 my_ip = {{ openstack_controller_ip }}
 network_api_class = nova.network.neutronv2.api.API
 security_group_api = neutron
-linuxnet_interface_driver = nova.network.linux_net.NeutronLinuxBridgeInterfaceDriver
+linuxnet_interface_driver = nova.network.linux_net.LinuxOVSInterfaceDriver
 firewall_driver = nova.virt.firewall.NoopFirewallDriver
 
-enabled_apis=ec2,osapi_compute,metadata
+enabled_apis=osapi_compute,metadata
 verbose = True
 
 memcached_servers={{ openstack_memcached_servers }}
@@ -1767,6 +1767,8 @@ log_file=/var/log/nova/nova.log
 # expected to arrive at all. (integer value)
 #vif_plugging_timeout=300
 
+vif_plugging_is_fatal= false
+vif_plugging_timeout= 0
 
 #
 # Options defined in nova.virt.firewall
