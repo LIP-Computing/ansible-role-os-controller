@@ -88,7 +88,7 @@ network_vlan_ranges = public,vlan
 [ml2_type_gre]
 # (ListOpt) Comma-separated list of <tun_min>:<tun_max> tuples enumerating ranges of GRE tunnel IDs that are available for tenant network allocation
 # tunnel_id_ranges =
-tunnel_id_ranges = 1:16384
+tunnel_id_ranges = 1:1000
 
 [ml2_type_vxlan]
 # (ListOpt) Comma-separated list of <vni_min>:<vni_max> tuples enumerating
@@ -125,7 +125,7 @@ vni_ranges = 1:32768
 [ovs]
 local_ip = {{ openstack_controller_ip }}
 enable_tunneling = True
-bridge_mappings = vlan:{{ openstack_neutron_private_interface }},external:{{ openstack_neutron_public_interface }}
+bridge_mappings = external:br-ex
 
 [agent]
 l2_population = True

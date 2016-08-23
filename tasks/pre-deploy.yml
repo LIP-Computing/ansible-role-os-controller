@@ -45,3 +45,20 @@
   template: src={{ item.src }} dest={{ item.dest }} backup=yes
   with_items:
     - { src: 'neutron/hosts.j2', dest: '/etc/hosts'}
+
+- name: Set Selinux in permissive mode
+  shell: setenforce 0
+
+#SELINUX
+- name: Persist in the configuration file the Selinux permissive mode.
+  lineinfile: >
+    dest=/etc/sysconfig/selinux
+    regexp="{{ item.regexp }}"
+    line="{{ item.line }}"
+    state=present
+  with_items:
+    - { regexp: "^SELINUX=", line: "SELINUX=permissive" }
+
+- name: Set hostame to "{{ openstack_controller_host }}"
+  shell: hostnamectl set-hostname "{{ openstack_controller_host }}"
+  ignore_errors: True
