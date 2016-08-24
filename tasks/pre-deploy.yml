@@ -47,10 +47,12 @@
     - { src: 'neutron/hosts.j2', dest: '/etc/hosts'}
 
 - name: Set Selinux in permissive mode
+  ignore_errors: True
   shell: setenforce 0
 
 #SELINUX
 - name: Persist in the configuration file the Selinux permissive mode.
+  ignore_errors: True
   lineinfile: >
     dest=/etc/sysconfig/selinux
     regexp="{{ item.regexp }}"
