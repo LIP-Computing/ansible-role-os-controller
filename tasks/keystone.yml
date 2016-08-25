@@ -68,12 +68,6 @@
   become_user: keystone
   run_once: True
 
-#- name: Initialize fernet tokens
-#  command: keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
-#
-#- name: Service http
-#  service: name=httpd enabled=yes state=restarted
-
 - name: Create the service entity for keystone.
   include: openstack/create_service.yml
   vars:

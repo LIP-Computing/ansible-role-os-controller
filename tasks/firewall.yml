@@ -11,6 +11,9 @@
     iptables -I INPUT -p tcp -m multiport --ports 8000,8004 -m comment --comment "openstack heat" -j ACCEPT
     iptables -I INPUT -p tcp -m multiport --ports 8080 -m comment --comment "openstack swift" -j ACCEPT
     iptables -I INPUT -p tcp -m multiport --ports 80 -m comment --comment "openstack dashboard" -j ACCEPT
+    iptables -A INPUT -s {{ openstack_cidr }}  -p tcp  -m multiport --dports 5672,5671      -j ACCEPT
+    iptables -A INPUT -s {{ openstack_controller_ip }}   -p tcp  -m multiport --dports 4369,25672     -j ACCEPT
+    iptables -A INPUT -j LOG
     iptables-save > /etc/sysconfig/iptables
   tags: firewall
 

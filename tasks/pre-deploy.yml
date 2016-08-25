@@ -40,26 +40,9 @@
   shell: hostnamectl set-hostname "{{ openstack_controller_host }}"
 
 
-- name: Copy host file
-  when: not "{{ local_compute_node }}"
-  template: src={{ item.src }} dest={{ item.dest }} backup=yes
-  with_items:
-    - { src: 'neutron/hosts.j2', dest: '/etc/hosts'}
+- name: Add "{{ openstack_controller_host }}" to hosts file
+  shell: echo "{{ openstack_controller_ip }} {{ openstack_controller_host }}" >> /etc/hosts
 
-- name: Set Selinux in permissive mode
-  ignore_errors: True
-  shell: setenforce 0
-
-#SELINUX
-- name: Persist in the configuration file the Selinux permissive mode.
-  ignore_errors: True
-  lineinfile: >
-    dest=/etc/sysconfig/selinux
-    regexp="{{ item.regexp }}"
-    line="{{ item.line }}"
-    state=present
-  with_items:
-    - { regexp: "^SELINUX=", line: "SELINUX=permissive" }
 
 - name: Set hostame to "{{ openstack_controller_host }}"
   shell: hostnamectl set-hostname "{{ openstack_controller_host }}"
