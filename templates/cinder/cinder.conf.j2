@@ -4,14 +4,14 @@ auth_strategy = keystone
 my_ip = {{ openstack_controller_ip }}
 verbose = True
 
-volume_driver = cinder.volume.drivers.rbd.RBDDriver
-rbd_user = cinder
-rbd_pool = cinder
-rbd_ceph_conf = /etc/ceph/ceph.conf
-rbd_flatten_volume_from_snapshot = false
-rbd_max_clone_depth = 5
-rbd_store_chunk_size = 4
-rados_connect_timeout = -1
+#volume_driver = cinder.volume.drivers.rbd.RBDDriver
+#rbd_user = cinder
+#rbd_pool = cinder
+#rbd_ceph_conf = /etc/ceph/ceph.conf
+#rbd_flatten_volume_from_snapshot = false
+#rbd_max_clone_depth = 5
+#rbd_store_chunk_size = 4
+#rados_connect_timeout = -1
 glance_api_version = 2
 
 rbd_secret_uuid = {{ openstack_libvirt_secret_uuid }}

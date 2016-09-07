@@ -35,7 +35,6 @@
   with_items:
     - { src: 'keystone/keystone-dist-paste.ini.j2', dest: '/etc/keystone/keystone-dist-paste.ini' }
     - { src: 'keystone/keystone.conf.j2', dest: '/etc/keystone/keystone.conf' }
-#    - { src: 'keystone/policy.json.j2', dest: '/etc/keystone/policy.json' } MAKE PROBLEMS
     - { src: 'keystone/wsgi-keystone.conf.j2', dest: '/etc/httpd/conf.d/wsgi-keystone.conf' }
 
 - name: Start http daemon.
@@ -45,7 +44,7 @@
 
 #rabbit
 - name: Service rabbitmq
-  service: name=rabbitmq-server enabled=yes state=started
+  service: name=rabbitmq-server enabled=yes state=restarted
 
 - name: rabbitmq user setup
   rabbitmq_user: user={{ openstack_rabbit_user }}

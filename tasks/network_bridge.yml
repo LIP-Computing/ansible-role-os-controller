@@ -1,0 +1,13 @@
+---
+- name: Copy script for bridge configuration
+  template: src={{ item.src }} dest={{ item.dest }} mode=0740 backup=yes
+  with_items:
+    - { src: 'neutron/bridge_conf.sh.j2', dest: '/root/bridge_conf.sh' }
+
+- name: Create br-ex if not exits
+  shell: 'ovs-vsctl add-br {{ openstack_external_bridge }}'
+  ignore_errors: True
+
+- name: Execute br-ex and {{ openstack_neutron_public_interface}} configuration
+  shell: 'nohup /root/bridge_conf.sh &'
+  ignore_errors: True

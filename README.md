@@ -16,7 +16,8 @@ It have been tested with Openstack Liberty on Centos 7
 Requirements
 ------------
 
-The role depends from the role geerlingguy.mysql.
+* The role depends from the role geerlingguy.mysql.
+* Disable SELinux (reboot is required).
 
 Role Variables
 --------------

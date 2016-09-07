@@ -55,7 +55,7 @@
 
 # Install and configure
 - name: Install OpenStack cinder packages.
-  yum: name={{ item }} state=installed
+  yum: name={{ item }} state=latest
   with_items:
     - openstack-cinder
     - python-cinderclient
@@ -74,4 +74,3 @@
   with_items:
     - openstack-cinder-api
     - openstack-cinder-scheduler
-    - openstack-cinder-volume

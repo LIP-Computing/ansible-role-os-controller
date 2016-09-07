@@ -11,11 +11,6 @@ password = {{ openstack_neutron_db_password }}
 
 nova_metadata_ip = {{ openstack_controller_host }}
 metadata_proxy_shared_secret = {{ openstack_neutron_metadata_secret }}
-# we need it? only mitaka?
-#nova_metadata_port = 8775
-#nova_metadata_protocol = http
-#auth_version=v3
-
 
 verbose = True
 

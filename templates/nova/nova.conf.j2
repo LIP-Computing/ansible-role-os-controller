@@ -284,8 +284,8 @@ state_path=/var/lib/nova
 
 # The IP address on which the EC2 API will listen. (string
 # value)
-#ec2_listen=0.0.0.0
-ec2_listen={{ openstack_controller_host }}
+ec2_listen=0.0.0.0
+
 
 # The port on which the EC2 API will listen. (integer value)
 #ec2_listen_port=8773
@@ -296,8 +296,8 @@ ec2_listen={{ openstack_controller_host }}
 
 # The IP address on which the OpenStack API will listen.
 # (string value)
-#osapi_compute_listen=0.0.0.0
-osapi_compute_listen={{ openstack_controller_host }}
+osapi_compute_listen=0.0.0.0
+
 
 # The port on which the OpenStack API will listen. (integer
 # value)
@@ -312,8 +312,8 @@ osapi_compute_listen={{ openstack_controller_host }}
 
 # The IP address on which the metadata API will listen.
 # (string value)
-#metadata_listen=0.0.0.0
-metadata_listen={{ openstack_controller_host }}
+metadata_listen=0.0.0.0
+
 
 # The port on which the metadata API will listen. (integer
 # value)
@@ -690,12 +690,12 @@ api_paste_config=nova-api-paste.ini
 #
 
 # Host on which to listen for incoming requests (string value)
-#novncproxy_host=0.0.0.0
-novncproxy_host={{ openstack_controller_host }}
+novncproxy_host=0.0.0.0
+
 
 # Port on which to listen for incoming requests (integer
 # value)
-#novncproxy_port=6080
+novncproxy_port=6080
 
 
 #
@@ -1938,12 +1938,12 @@ vif_plugging_timeout= 0
 #fatal_deprecations=false
 
 [vnc]
-vncserver_listen = $my_ip # in separate working node should be 0.0.0.0
+vncserver_listen = 0.0.0.0
 vncserver_proxyclient_address = $my_ip
 
 # working node
 #enabled = True
-#novncproxy_base_url = http://{{openstack_controller_host}}:6080/vnc_auto.html
+#novncproxy_base_url = http://$my_ip:6080/vnc_auto.html
 
 [api_database]
 

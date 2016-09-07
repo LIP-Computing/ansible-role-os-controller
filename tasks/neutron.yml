@@ -37,7 +37,7 @@
 
 # Install and configure
 - name: Install OpenStack neutron packages.
-  yum: name={{ item }} state=installed
+  yum: name={{ item }} state=latest
   with_items:
     - openstack-neutron
     - openstack-neutron-ml2

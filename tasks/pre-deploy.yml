@@ -34,16 +34,3 @@
   with_items:
     - python-openstackclient
 
-# todo(jorgesece): move to new role
-- name: Set hostame to "{{ openstack_controller_host }}"
-  when: not "{{ local_compute_node }}"
-  shell: hostnamectl set-hostname "{{ openstack_controller_host }}"
-
-
-- name: Add "{{ openstack_controller_host }}" to hosts file
-  shell: echo "{{ openstack_controller_ip }} {{ openstack_controller_host }}" >> /etc/hosts
-
-
-- name: Set hostame to "{{ openstack_controller_host }}"
-  shell: hostnamectl set-hostname "{{ openstack_controller_host }}"
-  ignore_errors: True

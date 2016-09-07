@@ -32,8 +32,7 @@
     line="{{ item.line }}"
     state=present
   with_items:
-    - { regexp: "^#?novncproxy_base_url", line: "novncproxy_base_url = http://{{openstack_controller_host}}:6080/vnc_auto.html" }
-    - { regexp: "^#?vncserver_proxyclient_address", line: "vncserver_proxyclient_address = {{ openstack_controller_host }}" }
+    - { regexp: "^#?novncproxy_base_url", line: "novncproxy_base_url = http://{{openstack_controller_ip}}:6080/vnc_auto.html" }
 
 - name: Install network components
   yum: name={{ item }} state=installed

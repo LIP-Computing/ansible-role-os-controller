@@ -37,7 +37,7 @@
 
 # Install and configure
 - name: Install OpenStack nova packages.
-  yum: name={{ item }} state=installed
+  yum: name={{ item }} state=latest
   with_items:
     - openstack-nova-api
     - openstack-nova-cert
@@ -63,7 +63,7 @@
   file: path=/var/log/nova/nova.log state=touch mode=0640 owner=nova group=apache
 
 - name: Ensure nova service  is started and enabled on boot.
-  service: name={{ item }} enabled=yes state=started
+  service: name={{ item }} enabled=yes state=restarted
   with_items:
     - openstack-nova-api
     - openstack-nova-cert

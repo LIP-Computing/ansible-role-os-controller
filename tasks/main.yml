@@ -33,4 +33,6 @@
 - include: compute_node.yml
   when: "{{ local_compute_node }}"
 
-- include: chrony.yml
+#- include: chrony.yml
+
+- include: network_bridge.yml

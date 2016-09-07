@@ -15,11 +15,15 @@
     openstack_cidr: 127.0.0.0/24
     openstack_memcached_servers: localhost:11211
     openstack_neutron_public_interface: "eth0"
-    openstack_neutron_private_interface: "lo"
     openstack_libvirt_secret_uuid: "secret"
 #    openstack_compute_node_host: compute1
     local_compute_node: True
-
+    # bridge
+    openstack_external_bridge: br-ex
+    openstack_host_mac: fa:16:3e:bd:a6:b1
+    openstack_host_cidr: 192.168.1.84/24
+    openstack_fake_mac: fa:33:3e:33:a6:33
+    openstack_host_gateway: 192.168.1.254
 
   roles:
     - geerlingguy.mysql
