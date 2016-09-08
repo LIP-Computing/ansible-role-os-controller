@@ -1,7 +1,10 @@
 [DEFAULT]
+debug=True
 verbose = True
 interface_driver = neutron.agent.linux.interface.OVSInterfaceDriver
 dhcp_driver = neutron.agent.linux.dhcp.Dnsmasq
 use_namespaces = True
 dhcp_delete_namespaces = True
 enable_isolated_metadata = True
+enable_metadata_network = True
+dnsmasq_config_file = /etc/neutron/dnsmasq-neutron.conf

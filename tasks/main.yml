@@ -6,15 +6,15 @@
   tags: limits
 
 # Prepare deployment
-- include: pre-deploy.yml
-
-# keystone
-- include: keystone.yml
-
-# glance
-- include: glance.yml
-
-# nova
+#- include: pre-deploy.yml
+#
+## keystone
+#- include: keystone.yml
+#
+## glance
+#- include: glance.yml
+#
+## nova
 - include: nova.yml
 
 # neutron
@@ -24,13 +24,7 @@
 - include: horizon.yml
 
 # cinder
-- include: cinder.yml
-#
-# firewall
-- include: firewall.yml
-
-# compute node
-- include: compute_node.yml
-  when: "{{ local_compute_node }}"
-
-- include: network_bridge.yml
+#- include: cinder.yml
+##
+## firewall
+#- include: firewall.yml
