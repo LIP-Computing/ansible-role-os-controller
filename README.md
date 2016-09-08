@@ -1,5 +1,5 @@
-Role Name
-=========
+Role os-controller
+==================
 
 This ansible role provide the installation and configuration of the controllers of the main services of openstack:
 
@@ -10,7 +10,9 @@ This ansible role provide the installation and configuration of the controllers 
 * horizon
 * cinder
 
-In addition, it installs and configures the required the software dependencies, and configure the firewall.
+The role install in the same host the network controller and network node with local driver configured. It uses a 
+
+On the other hand, it installs and configures the required the software dependencies, and configure the firewall.
 It have been tested with Openstack Liberty on Centos 7
 
 Requirements
@@ -18,6 +20,7 @@ Requirements
 
 * The role depends from the role geerlingguy.mysql.
 * Disable SELinux (reboot is required).
+
 
 Role Variables
 --------------
