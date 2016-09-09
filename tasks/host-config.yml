@@ -9,10 +9,12 @@
 - name: "Test {{ openstack_controller_ip }} exists in /etc/hosts"
   shell: grep "^{{ openstack_controller_ip }}" /etc/hosts
   register: ip_exits
+  ignore_errors: True
 
 - name: "Test {{ openstack_controller_host }} exists in /etc/hosts"
   shell: grep "{{ openstack_controller_host }}" /etc/hosts
   register: host_exits
+  ignore_errors: True
 
 - name: Add "{{ openstack_controller_host }}" to hosts file if ip exists
   when: ip_exits.stdout != "" and host_exits.stdout == ""
