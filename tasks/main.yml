@@ -6,15 +6,15 @@
   tags: limits
 
 # Prepare deployment
-#- include: host-config.yml
+- include: host-config.yml
 
-#- include: pre-deploy.yml
-#
-## keystone
-#- include: keystone.yml
-#
-## glance
-#- include: glance.yml
+- include: pre-deploy.yml
+
+# keystone
+- include: keystone.yml
+
+# glance
+- include: glance.yml
 #
 ## nova
 - include: nova.yml
@@ -26,7 +26,7 @@
 - include: horizon.yml
 
 # cinder
-#- include: cinder.yml
-##
-## firewall
-#- include: firewall.yml
+- include: cinder.yml
+#
+# firewall
+- include: firewall.yml
