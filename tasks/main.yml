@@ -6,6 +6,8 @@
   tags: limits
 
 # Prepare deployment
+#- include: host-config.yml
+
 #- include: pre-deploy.yml
 #
 ## keystone

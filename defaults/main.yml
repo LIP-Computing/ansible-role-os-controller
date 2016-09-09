@@ -106,4 +106,5 @@ admin_auth_env:
   OS_IDENTITY_API_VERSION: "{{ openstack_os_identity_api_version }}"
 
 #compute node
-local_compute_node: False
+openstack_neutron_public_interface: "eth0"
+openstack_neutron_bridge_interface: "br-ex"

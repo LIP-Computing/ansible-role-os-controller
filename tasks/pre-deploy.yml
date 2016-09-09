@@ -34,27 +34,3 @@
   with_items:
     - python-openstackclient
 
-- name: Set Selinux in permissive mode
-  shell: setenforce 0
-
-#SELINUX
-- name: Persist in the configuration file the Selinux permissive mode.
-  lineinfile: >
-    dest=/etc/sysconfig/selinux
-    regexp="{{ item.regexp }}"
-    line="{{ item.line }}"
-    state=present
-  with_items:
-    - { regexp: "^SELINUX=", line: "SELINUX=disable" }
-
-- name: Set hostame to "{{ openstack_controller_host }}"
-  shell: hostnamectl set-hostname "{{ openstack_controller_host }}"
-  ignore_errors: True
-
-- name: Add "{{ openstack_controller_host }}" to hosts file
-  lineinfile: dest=/etc/ansible/roles/ansible-role-os-controller/tests/hosts_docker
-              backup=True
-              backrefs=True
-              state=present
-              regexp='(^127.0.0.1(\s+(?! {{ openstack_controller_host }})[\w=/\-\.]+)*)\s*$'
-              line='\1 {{ openstack_controller_host }}'

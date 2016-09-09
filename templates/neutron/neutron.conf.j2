@@ -14,10 +14,10 @@ bind_host = 0.0.0.0
 bind_port = 9696
 api_paste_config = /usr/share/neutron/api-paste.ini
 allow_overlapping_ips = True
-nova_region_name = RegionOne
-nova_admin_username = nova
-nova_admin_password = openstack
-nova_admin_auth_url = {{ openstack_ath_url }}/v2
+# nova_region_name = {{ openstack_keystone_auth_region }}
+# nova_admin_username = nova
+# nova_admin_password = {{ openstack_nova_keystone_password }}
+# nova_admin_auth_url = {{ openstack_ath_url }}/v2
 
 [matchmaker_redis]
 [matchmaker_ring]

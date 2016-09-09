@@ -17,19 +17,8 @@ enable_security_group = True
 
 ####################
 # OVS
+# in openvswitch-agent.ini file
 
-[agent]
-tunnel_types = vxlan
-l2_population = False
-
-[ovs]
-enable_tunneling = True
-local_ip = {{ openstack_controller_ip }}
-
-[securitygroup]
-enable_security_group = True
-enable_ipset = False
-firewall_driver = neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
 
 
 
