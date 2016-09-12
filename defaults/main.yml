@@ -104,3 +104,4 @@ admin_auth_env:
   OS_AUTH_URL: "{{ openstack_os_url }}"
   OS_IDENTITY_API_VERSION: "{{ openstack_os_identity_api_version }}"
 
+openstack_neutron_bridge_interface: "br-ex"
