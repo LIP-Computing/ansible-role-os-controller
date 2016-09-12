@@ -56,7 +56,7 @@ project_name = service
 username = nova
 password = {{ openstack_nova_keystone_password }}
 [libvirt]
-##virt_type=kvm  virt_type = qemu
+#virt_type=kvm
 [metrics]
 [neutron]
 url = http://{{ openstack_controller_host }}:9696
