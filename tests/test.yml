@@ -14,17 +14,9 @@
     openstack_controller_ip: 127.0.0.1
     openstack_cidr: 127.0.0.0/24
     openstack_memcached_servers: localhost:11211
-    openstack_neutron_public_interface: "eth0"
     openstack_libvirt_secret_uuid: "secret"
     local_compute_node: True
-    # bridge
-    openstack_external_bridge: br-ex
-    openstack_host_mac: 02:42:ac:11:00:02
-    openstack_host_cidr: 172.17.0.2/24
-    openstack_fake_mac: fa:33:3e:33:a6:33
-    openstack_host_gateway: 172.17.0.1
 
   roles:
     - geerlingguy.mysql
     - ansible-role-os-controller
-

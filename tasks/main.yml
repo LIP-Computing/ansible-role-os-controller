@@ -9,7 +9,9 @@
 - include: host-config.yml
 
 - include: pre-deploy.yml
-
+#
+- include: chrony.yml
+#
 # keystone
 - include: keystone.yml
 
@@ -27,6 +29,8 @@
 
 # cinder
 - include: cinder.yml
-#
+
 # firewall
 - include: firewall.yml
+
+
