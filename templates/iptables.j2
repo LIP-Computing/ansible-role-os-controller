@@ -34,28 +34,24 @@ COMMIT
 :INPUT ACCEPT [0:0]
 :FORWARD ACCEPT [0:0]
 :OUTPUT ACCEPT [0:0]
-:nova-api-FORWARD - [0:0]
-:nova-api-INPUT - [0:0]
-:nova-api-OUTPUT - [0:0]
-:nova-api-local - [0:0]
-:nova-filter-top - [0:0]
--A INPUT -p tcp -m multiport --ports 80 -m comment --comment "openstack dashboard" -j ACCEPT
--A INPUT -p tcp -m multiport --ports 8080 -m comment --comment "openstack swift" -j ACCEPT
--A INPUT -p tcp -m multiport --ports 8000,8004 -m comment --comment "openstack heat" -j ACCEPT
--A INPUT -p tcp -m multiport --ports 9696 -m comment --comment "openstack neutron" -j ACCEPT
--A INPUT -p tcp -m multiport --ports 8776 -m comment --comment "openstack cinder" -j ACCEPT
--A INPUT -p tcp -m multiport --ports 8773,8774,8775,6080 -m comment --comment "openstack nova" -j ACCEPT
--A INPUT -p tcp -m multiport --ports 9292,9191 -m comment --comment "openstack glance" -j ACCEPT
--A INPUT -p tcp -m multiport --ports 5000 -m comment --comment "openstack keystone" -j ACCEPT
--A INPUT -j nova-api-INPUT
--A INPUT -s {{ openstack_cidr }} -p tcp -m multiport --dports 5672,5671 -j ACCEPT
--A INPUT -s {{ openstack_controller_ip }}/24 -p tcp -m multiport --dports 4369,25672 -j ACCEPT
+-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A INPUT -p icmp -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+-A INPUT -p tcp -m multiport --ports 3260 -m comment --comment "001 cinder incoming" -j ACCEPT
+-A INPUT -p tcp -m multiport --ports 80 -m comment --comment "001 horizon incoming" -j ACCEPT
+-A INPUT -p tcp -m multiport --ports 9292 -m comment --comment "001 glance incoming" -j ACCEPT
+-A INPUT -p tcp -m multiport --ports 5000,35357 -m comment --comment "001 keystone incoming" -j ACCEPT
+-A INPUT -p tcp -m multiport --ports 3306 -m comment --comment "001 mariadb incoming" -j ACCEPT
+-A INPUT -p tcp -m multiport --ports 6080 -m comment --comment "001 novncproxy incoming" -j ACCEPT
+-A INPUT -p tcp -m multiport --ports 8770:8780 -m comment --comment "001 novaapi incoming" -j ACCEPT
+-A INPUT -p tcp -m multiport --ports 9696 -m comment --comment "001 neutron incoming" -j ACCEPT
+-A INPUT -p tcp -m multiport --ports 5672 -m comment --comment "001 qpid incoming" -j ACCEPT
+-A INPUT -p tcp -m multiport --ports 8700 -m comment --comment "001 metadata incoming" -j ACCEPT
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 22 -j ACCEPT
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 5900:5999 -j ACCEPT
+-A INPUT -p gre -j ACCEPT
+-A OUTPUT -p gre -j ACCEPT
 -A INPUT -j LOG
--A FORWARD -j nova-filter-top
--A FORWARD -j nova-api-FORWARD
--A OUTPUT -j nova-filter-top
--A OUTPUT -j nova-api-OUTPUT
--A nova-api-INPUT -p tcp -m tcp --dport 8775 -m addrtype --dst-type LOCAL -j ACCEPT
--A nova-filter-top -j nova-api-local
 COMMIT
+
 
