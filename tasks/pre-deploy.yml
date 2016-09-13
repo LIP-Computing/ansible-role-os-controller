@@ -1,6 +1,12 @@
 ---
 # Pre deployment tasks
 
+- name: Install yum-plugin-priorities and epel-release
+  yum: name="{{ item }}" state=latest
+  with_items:
+    - epel-release
+    - yum-plugin-priorities
+
 - name: Install required packages
   yum: name="{{ item }}" state=latest update_cache=yes
   with_items:
@@ -18,12 +24,6 @@
     - iptables
     - iptables-services
 
-- name: Install yum-plugin-priorities and epel-release
-  yum: name="{{ item }}" state=latest
-  with_items:
-    - epel-release
-    - yum-plugin-priorities
-
 - name: Install Openstack "{{ openstack_version | default(liberty) }}"  packages
   yum: name="{{ item }}" state=latest update_cache=yes
   with_items:
@@ -33,5 +33,4 @@
   yum: name="{{ item }}" state=latest
   with_items:
     - python-openstackclient
-
 

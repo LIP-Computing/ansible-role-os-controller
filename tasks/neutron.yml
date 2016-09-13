@@ -37,23 +37,23 @@
 
 # Install and configure
 - name: Install OpenStack neutron packages.
-  yum: name={{ item }} state=installed
+  yum: name={{ item }} state=latest
   with_items:
     - openstack-neutron
     - openstack-neutron-ml2
-    - openstack-neutron-linuxbridge
+    - openstack-neutron-openvswitch
     - python-neutronclient
-    - ebtables
-    - ipset
 
 - name: Deploy neutron configuration files from templates
-  template: src={{ item.src }} dest={{ item.dest }} backup=yes
+  template: src={{ item.src }} dest={{ item.dest }} mode=0640 owner=root group=neutron backup=yes
   with_items:
     - { src: 'neutron/neutron.conf.j2', dest: '/etc/neutron/neutron.conf' }
     - { src: 'neutron/ml2_conf.ini.j2', dest: '/etc/neutron/plugins/ml2/ml2_conf.ini' }
-    - { src: 'neutron/linuxbridge_agent.ini.j2', dest: '/etc/neutron/plugins/ml2/linuxbridge_agent.ini' }
+    - { src: 'neutron/openvswitch_agent.ini.j2', dest: '/etc/neutron/plugins/ml2/openvswitch_agent.ini' }
+    - { src: 'neutron/l3_agent.ini.j2', dest: '/etc/neutron/l3_agent.ini' }
     - { src: 'neutron/dhcp_agent.ini.j2', dest: '/etc/neutron/dhcp_agent.ini' }
     - { src: 'neutron/metadata_agent.ini.j2', dest: '/etc/neutron/metadata_agent.ini' }
+    - { src: 'neutron/dnsmasq-neutron.conf.j2', dest: '/etc/neutron/dnsmasq-neutron.conf' }
 
 - name: Ensure ml2 config symbolic is exists.
   file: src=/etc/neutron/plugins/ml2/ml2_conf.ini dest=/etc/neutron/plugin.ini state=link
@@ -66,12 +66,19 @@
   run_once: True
   notify: restart nova
 
+- name: Restart services
+  service: name={{ item }} enabled=yes state=restarted
+  with_items:
+    - openstack-nova-api
+    - openstack-nova-scheduler
+    - openstack-nova-conductor
+
 - name: Ensure neutron service is started and enabled on boot.
-  service: name={{ item }} enabled=yes state=started
-  ignore_errors: True
+  service: name={{ item }} enabled=yes state=restarted
   with_items:
     - neutron-server
-    - neutron-linuxbridge-agent
+    - openvswitch
+    - neutron-openvswitch-agent
+    - neutron-l3-agent
     - neutron-dhcp-agent
     - neutron-metadata-agent
-#    - neutron-l3-agent TODO(jorgesece): test it

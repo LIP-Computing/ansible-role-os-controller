@@ -2,17 +2,9 @@
 # tasks file for firewall
 
 - name: Configure firewall.
-  shell: |
-    iptables -I INPUT -p tcp -m multiport --ports 5000 -m comment --comment "openstack keystone" -j ACCEPT
-    iptables -I INPUT -p tcp -m multiport --ports 9292,9191 -m comment --comment "openstack glance" -j ACCEPT
-    iptables -I INPUT -p tcp -m multiport --ports 8773,8774,8775,6080 -m comment --comment "openstack nova" -j ACCEPT
-    iptables -I INPUT -p tcp -m multiport --ports 8776 -m comment --comment "openstack cinder" -j ACCEPT
-    iptables -I INPUT -p tcp -m multiport --ports 9696 -m comment --comment "openstack neutron" -j ACCEPT
-    iptables -I INPUT -p tcp -m multiport --ports 8000,8004 -m comment --comment "openstack heat" -j ACCEPT
-    iptables -I INPUT -p tcp -m multiport --ports 8080 -m comment --comment "openstack swift" -j ACCEPT
-    iptables -I INPUT -p tcp -m multiport --ports 80 -m comment --comment "openstack dashboard" -j ACCEPT
-    iptables-save > /etc/sysconfig/iptables
-  tags: firewall
+  template: src={{ item.src }} dest={{ item.dest }} backup=yes
+  with_items:
+    - { src: 'iptables.j2', dest: '/etc/sysconfig/iptables' }
 
 - name: Restart iptables.
   service: name=iptables state=restarted

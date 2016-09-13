@@ -224,13 +224,13 @@ OPENSTACK_CINDER_FEATURES = {
 # balancer service, security groups, quotas, VPN service.
 #JORGESECE: disable support for layer-3 networking services
 OPENSTACK_NEUTRON_NETWORK = {
-    'enable_router': False,
-    'enable_quotas': False,
+    'enable_router': True,
+    'enable_quotas': True,
     'enable_ipv6': False,
     'enable_distributed_router': False,
     'enable_ha_router': False,
     'enable_lb': False,
-    'enable_firewall': False,
+    'enable_firewall': True,
     'enable_vpn': False,
     'enable_fip_topology_check': True,
 

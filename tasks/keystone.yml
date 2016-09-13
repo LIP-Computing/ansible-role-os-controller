@@ -19,6 +19,7 @@
   delay: 5
 
 #http
+
 - name: Configure httpd Listen Port.
   lineinfile: >
     dest=/etc/httpd/conf/httpd.conf
@@ -27,9 +28,17 @@
     state=present
   with_items:
     - { regexp: "^#?Listen", line: "Listen {{ openstack_http_port }}" }
+    - { regexp: "^#?ServerName", line: "ServerName {{ openstack_controller_host }}" }
+
+- name: Deploy keyston configuration files from templates
+  template: src={{ item.src }} dest={{ item.dest }} mode=0640 owner=keystone group=apache backup=yes
+  with_items:
+    - { src: 'keystone/keystone-dist-paste.ini.j2', dest: '/etc/keystone/keystone-dist-paste.ini' }
+    - { src: 'keystone/keystone.conf.j2', dest: '/etc/keystone/keystone.conf' }
+    - { src: 'keystone/wsgi-keystone.conf.j2', dest: '/etc/httpd/conf.d/wsgi-keystone.conf' }
 
 - name: Start http daemon.
-  service: "name={{ item }} state=started enabled=yes"
+  service: "name={{ item }} enabled=yes state=restarted"
   with_items:
     - httpd
 
@@ -46,17 +55,6 @@
                  write_priv=.*
                  state=present
 
-- name: Deploy keyston configuration files from templates
-  template: src={{ item.src }} dest={{ item.dest }} mode=0640 owner=keystone group=apache backup=yes
-  with_items:
-    - { src: 'keystone/keystone-dist-paste.ini.j2', dest: '/etc/keystone/keystone-dist-paste.ini' }
-    - { src: 'keystone/keystone.conf.j2', dest: '/etc/keystone/keystone.conf' }
-#    - { src: 'keystone/policy.json.j2', dest: '/etc/keystone/policy.json' } MAKE PROBLEMS
-    - { src: 'keystone/wsgi-keystone.conf.j2', dest: '/etc/httpd/conf.d/wsgi-keystone.conf' }
-
-- name: Service http
-  service: name=httpd enabled=yes state=restarted
-
 - name: Waiting for keystone service is started.
   wait_for: "host={{ openstack_controller_host }} port=35357 delay=10 timeout=30"
   run_once: true
@@ -68,12 +66,6 @@
   shell: keystone-manage db_sync
   become_user: keystone
   run_once: True
-
-#- name: Initialize fernet tokens
-#  command: keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
-#
-#- name: Service http
-#  service: name=httpd enabled=yes state=restarted
 
 - name: Create the service entity for keystone.
   include: openstack/create_service.yml

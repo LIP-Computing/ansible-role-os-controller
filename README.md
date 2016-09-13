@@ -1,5 +1,5 @@
-Role Name
-=========
+Role os-controller
+==================
 
 This ansible role provide the installation and configuration of the controllers of the main services of openstack:
 
@@ -10,13 +10,17 @@ This ansible role provide the installation and configuration of the controllers 
 * horizon
 * cinder
 
-In addition, it installs and configures the required the software dependencies, and configure the firewall.
+The role install in the same host the network controller and network node with local driver configured. It uses a 
+
+On the other hand, it installs and configures the required the software dependencies, and configure the firewall.
 It have been tested with Openstack Liberty on Centos 7
 
 Requirements
 ------------
 
-The role depends from the role geerlingguy.mysql.
+* The role depends from the role geerlingguy.mysql.
+* Disable SELinux (reboot is required).
+
 
 Role Variables
 --------------
@@ -34,7 +38,7 @@ Among all the configurable variable, we have used those for testing:
       openstack_keystone_config_revoke_driver: "sql"
       mysql_root_username: "{{ openstack_database_root }}"
       mysql_root_password: "{{ openstack_database_root_password }}"
-      openstack_ip: 10.0.0.11
+      openstack_controller_ip: 10.0.0.11
       openstack_memcached_servers: localhost:11211
       openstack_libvirt_secret_uuid: "secret"
 
@@ -58,7 +62,7 @@ Example Playbook
         openstack_keystone_config_revoke_driver: "sql"
         mysql_root_username: "{{ openstack_database_root }}"
         mysql_root_password: "{{ openstack_database_root_password }}"
-        openstack_ip: 10.0.0.11
+        openstack_controller_ip: 10.0.0.11
         openstack_memcached_servers: localhost:11211
         openstack_libvirt_secret_uuid: "secret"
     

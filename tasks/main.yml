@@ -6,15 +6,19 @@
   tags: limits
 
 # Prepare deployment
-- include: pre-deploy.yml
+- include: host-config.yml
 
+- include: pre-deploy.yml
+#
+- include: chrony.yml
+#
 # keystone
 - include: keystone.yml
 
 # glance
 - include: glance.yml
-
-# nova
+#
+## nova
 - include: nova.yml
 
 # neutron
@@ -28,3 +32,5 @@
 
 # firewall
 - include: firewall.yml
+
+
