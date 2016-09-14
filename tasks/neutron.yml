@@ -73,6 +73,16 @@
     - openstack-nova-scheduler
     - openstack-nova-conductor
 
+
+- name: Ensure openvswitch service is started.
+  service: name={{ item }} enabled=yes state=restarted
+  with_items:
+    - openvswitch
+
+- name: '"Create Bridge "{{ openstack_neutron_bridge_interface }}".'
+  shell: ovs-vsctl add-br {{ openstack_neutron_bridge_interface }}
+  ignore_errors: True
+
 - name: Ensure neutron service is started and enabled on boot.
   service: name={{ item }} enabled=yes state=restarted
   with_items:
