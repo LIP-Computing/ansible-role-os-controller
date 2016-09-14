@@ -148,8 +148,8 @@ Example Playbook
       vars:
         openstack_version: "liberty"
         openstack_controller_host: "localhost"
-        openstack_admin_token: "openstack"
-        openstack_admin_password: "openstack"
+        openstack_admin_token: "admin_token"
+        openstack_admin_password: "admin_password"
         openstack_database_host: localhost
         openstack_database_root: "root"
         openstack_database_root_password: "root"
@@ -159,7 +159,7 @@ Example Playbook
         openstack_controller_ip: 127.0.0.1
         openstack_cidr: 127.0.0.0/24
         openstack_memcached_servers: localhost:11211
-        openstack_libvirt_secret_uuid: "secret"
+        openstack_libvirt_secret_uuid: "libvirt_secret"
     
       roles:
         - geerlingguy.mysql
