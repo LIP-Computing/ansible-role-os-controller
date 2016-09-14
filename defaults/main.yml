@@ -32,7 +32,7 @@ openstack_admin_role: "admin"
 # rabbitmq variables
 openstack_rabbit_host: "{{ openstack_controller_host }}"
 openstack_rabbit_user: openstack
-openstack_rabbit_pass: 12345
+openstack_rabbit_pass: "{{ openstack_admin_password }}"
 
 # keystone
 openstack_keystone_db_name: "keystone"
