@@ -23,10 +23,10 @@ openstack_database_host: "{{ openstack_controller_host }}"
 openstack_http_port: 80
 
 # auth
-openstack_admin_token: "openstack"
+openstack_admin_token: "admin_token"
 openstack_admin_user: "admin"
 openstack_admin_project: "admin"
-openstack_admin_password: "openstack"
+openstack_admin_password: "admin_password"
 openstack_admin_role: "admin"
 
 # rabbitmq variables
