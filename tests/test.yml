@@ -15,8 +15,7 @@
     openstack_cidr: 127.0.0.0/24
     openstack_memcached_servers: localhost:11211
     openstack_libvirt_secret_uuid: "secret"
-    local_compute_node: True
 
   roles:
     - geerlingguy.mysql
-    - ansible-role-os-controller
+    - LIP-Computing.os-controller
