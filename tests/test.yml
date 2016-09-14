@@ -18,4 +18,4 @@
 
   roles:
     - geerlingguy.mysql
-    - ansible-role-os-controller
+    - LIP-Computing.os-controller
