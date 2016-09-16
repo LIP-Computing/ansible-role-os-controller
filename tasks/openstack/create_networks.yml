@@ -1,0 +1,99 @@
+---
+
+- name: "Get {{ openstack_user_project}} user id"
+  command: 'openstack project show "{{ openstack_user_project }}" -c id -f value'
+  register: openstack_demo_tenant_id
+  environment: "{{ admin_auth_env }}"
+
+- name: 'Check public network "{{ openstack_external_net_name }}" exists'
+  command: neutron net-show {{ openstack_external_net_name }}
+  register: netpublicExist
+  ignore_errors: True
+  run_once: True
+  environment: "{{ admin_auth_env }}"
+
+- name: Create public network "{{ openstack_external_net_name }}"
+  shell: |
+      neutron net-create {{ openstack_external_net_name }} --router:external True --provider:physical_network external --provider:network_type flat
+  become_user: neutron
+  run_once: True
+  when: netpublicExist|failed
+  environment: "{{ admin_auth_env }}"
+
+- name: 'Check public subnetwork "{{ openstack_external_subnet_name }}" exists'
+  command: neutron subnet-show {{ openstack_external_subnet_name }}
+  register: subnetpublicExist
+  ignore_errors: True
+  run_once: True
+  environment: "{{ admin_auth_env }}"
+
+- name: Create public subnetwork "{{ openstack_external_subnet_name }}"
+  shell: |
+       neutron subnet-create {{ openstack_external_net_name }} --name {{ openstack_external_subnet_name }} \
+        --gateway {{ openstack_external_subnet_gateway }}  {{ openstack_external_subnet_cird }}  \
+       --allocation-pool start={{ openstack_external_subnet_pool_start }},end={{ openstack_external_subnet_pool_end }}
+  become_user: neutron
+  run_once: True
+  when: subnetpublicExist|failed
+  environment: "{{ admin_auth_env }}"
+
+- name: 'Check private network "{{ openstack_demo_net_name }}" exists'
+  command: neutron net-show {{ openstack_demo_net_name }}
+  register: netdemoExist
+  ignore_errors: True
+  run_once: True
+  environment: "{{ admin_auth_env }}"
+
+- name: Create private network "{{ openstack_demo_net_name }}"
+  shell: |
+       neutron net-create {{ openstack_demo_net_name }} --tenant-id {{ openstack_demo_tenant_id.stdout }} \
+         --provider:network_type vxlan
+  become_user: neutron
+  run_once: True
+  when: netdemoExist|failed
+  environment: "{{ admin_auth_env }}"
+
+- name: 'Check private subnetwork "{{ openstack_demo_subnet_name }}" exists'
+  command: neutron subnet-show {{ openstack_demo_subnet_name }}
+  register: subnetdemoExist
+  ignore_errors: True
+  run_once: True
+  environment: "{{ admin_auth_env }}"
+
+- name: Create private subnetwork "{{ openstack_demo_subnet_name }}"
+  shell: |
+       neutron subnet-create "{{ openstack_demo_net_name }}" --name {{ openstack_demo_subnet_name }} \
+        --gateway {{ openstack_demo_subnet_gateway }} {{ openstack_demo_subnet_cidr }} \
+        --dns-nameservers list=true {{ openstack_demo_dns_servers }}
+  become_user: neutron
+  run_once: True
+  when: subnetdemoExist|failed
+  environment: "{{ admin_auth_env }}"
+
+- name: 'Check router "{{ openstack_demo_subnet_name }}" exists'
+  command: neutron router-show {{ openstack_demo_router }}
+  register: routerdemoExist
+  ignore_errors: True
+  run_once: True
+  environment: "{{ admin_auth_env }}"
+
+- name: Create Router "{{ openstack_demo_router }}".
+  shell: |
+        neutron router-create {{ openstack_demo_router }}
+  become_user: neutron
+  run_once: True
+  when: routerdemoExist|failed
+  environment: "{{ admin_auth_env }}"
+
+- name: 'Create interface for "{{ openstack_demo_subnet_name }} " in " {{ openstack_demo_router }}"'
+  shell: |
+        neutron router-interface-add {{ openstack_demo_router }} {{ openstack_demo_subnet_name }}
+  run_once: True
+  environment: "{{ admin_auth_env }}"
+
+- name: Set router gateway for "{{ openstack_external_net_name }}" in "{{ openstack_demo_router }}"
+  shell: |
+        neutron router-gateway-set  {{ openstack_demo_router }} {{ openstack_external_net_name }}
+  run_once: True
+  environment: "{{ admin_auth_env }}"
+#
