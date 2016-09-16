@@ -5,8 +5,6 @@
   register: openstack_demo_tenant_id
   environment: "{{ admin_auth_env }}"
 
-- debug: var=openstack_demo_tenant_id.stdout
-
 - name: 'Check public network "{{ openstack_external_net_name }}" exists'
   command: neutron net-show {{ openstack_external_net_name }}
   register: netpublicExist
