@@ -120,8 +120,8 @@ openstack_external_subnet_pool_start: 192.168.1.1
 openstack_external_subnet_pool_end: 192.168.1.128
 
 
-openstack_demo_net_name: demo2_net
-openstack_demo_subnet_name: demo2_subnet
+openstack_demo_net_name: demo_net
+openstack_demo_subnet_name: demo_subnet
 openstack_demo_subnet_gateway: 192.168.200.254
 openstack_demo_subnet_cidr: 192.168.200.0/24
 openstack_demo_dns_servers: '8.8.8.8 8.8.8.4'
