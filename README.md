@@ -32,7 +32,8 @@ Requirements
 Role Variables
 --------------
 The variables are related to the Openstack version, endpoints, IPs, passwords: 
-       
+    
+    openstack_version: openstack version ("liberty" by default)
     openstack_controller_host: hostname for controller ( for example "controller")
     openstack_controller_ip: controller host ip (127.0.0.1 by default)
     openstack_cidr: controller host CIDR (127.0.0.1/8 by default)
@@ -158,7 +159,7 @@ The variables are related to the Openstack version, endpoints, IPs, passwords:
     openstack_demo_subnet_cidr: private subnet cidr ("192.168.200.0/24" by default)
     openstack_demo_dns_servers: private dns servers ("'8.8.8.8 8.8.8.4'" by default)
     
-    openstack_demo_router: "router1"
+    openstack_demo_router: demo router name ("router1" by default)
     
 
 
