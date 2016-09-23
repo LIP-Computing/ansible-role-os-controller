@@ -27,6 +27,7 @@ Requirements
 
 * Disable SELinux (reboot is required).
 * Ensure the system has configured swap memory
+* Disable "– update_hostname" option form /etc/cloud/cloud.cfg. It prevents to change the hostname when restarting the VM.
 
 
 Role Variables
