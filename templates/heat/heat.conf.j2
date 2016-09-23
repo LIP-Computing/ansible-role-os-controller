@@ -19,7 +19,7 @@ rpc_backend = rabbit
 auth_uri = {{ openstack_ath_uri }}
 
 [database]
-connection = "mysql+pymysql://keystone:{{ openstack_heat_db_password }}@{{ openstack_database_host }}/heat"
+connection = mysql://heat:{{ openstack_heat_db_password }}@{{ openstack_database_host }}/heat
 
 [ec2authtoken]
 auth_uri = {{ openstack_endpoint_internal_url }}

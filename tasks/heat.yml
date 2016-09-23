@@ -5,7 +5,7 @@
 - name: "Create {{ openstack_heat_stack_user_domain_name }} user in service project"
   include: openstack/create_user_in_project.yml
   vars:
-    username: {{ openstack_heat_stack_user_domain_name }}
+    username: "{{ openstack_heat_stack_user_domain_name }}"
     password: "{{ openstack_admin_password }}"
     project: service
     role: admin
@@ -40,20 +40,20 @@
     service: cloudformation
     region: RegionOne
     endpoints:
-      adminurl: "{{ openstack_heat_adminurl_heat-cfn }}"
-      internalurl: "{{ openstack_heat_internalurl_heat-cfn }}"
-      publicurl: "{{ openstack_heat_publicurl_heat-cfn }}"
+      adminurl: "{{ openstack_heat_adminurl_heat_cfn }}"
+      internalurl: "{{ openstack_heat_internalurl_heat_cfn }}"
+      publicurl: "{{ openstack_heat_publicurl_heat_cfn }}"
 
-- name: "Create domain {{ openstack_heat_stack_user_domain_name }}".
+- name: "Create domain {{ openstack_heat_stack_user_domain_name }}"
   include: openstack/create_domain.yml
   vars:
     domain: "{{ openstack_heat_stack_user_domain_name }}"
     description: "Stack projects and users"
 
 - name: "Create {{ openstack_heat_stack_domain_admin }} user {{ openstack_heat_stack_user_domain_name }} in domain"
-  include: openstack/create_user_in_project.yml
+  include: openstack/create_user_in_domain.yml
   vars:
-    username: {{ openstack_heat_stack_user_domain_name }}
+    username: "{{ openstack_heat_stack_user_domain_name }}"
     password: "{{ openstack_admin_password }}"
     domain: "{{ openstack_heat_stack_user_domain_name }}"
     role: admin
@@ -66,9 +66,9 @@
 - name: "Add role to {{ openstack_heat_stack_owner_role }} demo role"
   include: openstack/create_role.yml
   vars:
-    username: {{ openstack_user_name }}
+    username: "{{ openstack_user_name }}"
     role: "{{ openstack_heat_stack_owner_role }}"
-    project: "{{ openstack_user_project }}
+    project: "{{ openstack_user_project }}"
 
 - name: "Create {{ openstack_heat_stack_user_role }} role"
   include: openstack/create_role.yml
@@ -87,7 +87,7 @@
 
 - name: Copy template file heat
   template:
-    src=templates/heat.conf.j2
+    src=templates/heat/heat.conf.j2
     dest=/etc/heat/heat.conf
     mode=0640
     owner=heat

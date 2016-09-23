@@ -111,9 +111,9 @@ openstack_heat_adminurl: "http://{{ openstack_admin_vip }}:8004/v1/%\\(tenant_id
 openstack_heat_internalurl: "http://{{ openstack_internal_vip }}:8004/v1/%\\(tenant_id\\)s"
 openstack_heat_publicurl: "http://{{ openstack_public_vip }}:8004/v1/%\\(tenant_id\\)s"
 
-openstack_heat_adminurl_heat-cfn: "http://{{ openstack_admin_vip }}:8000/v1"
-openstack_heat_internalurl_heat-cfn: "http://{{ openstack_internal_vip }}:8000/v1"
-openstack_heat_publicurl_heat-cfn: "http://{{ openstack_public_vip }}:8000/v1"
+openstack_heat_adminurl_heat_cfn: "http://{{ openstack_admin_vip }}:8000/v1"
+openstack_heat_internalurl_heat_cfn: "http://{{ openstack_internal_vip }}:8000/v1"
+openstack_heat_publicurl_heat_cfn: "http://{{ openstack_public_vip }}:8000/v1"
 
 
 ## auth env
