@@ -92,6 +92,30 @@ openstack_cinder_adminurl_v2: "http://{{ openstack_admin_vip }}:8776/v2/%\\(tena
 openstack_cinder_intelnalurl_v2: "http://{{ openstack_internal_vip }}:8776/v2/%\\(tenant_id\\)s"
 openstack_cinder_publicurl_v2: "http://{{ openstack_public_vip }}:8776/v2/%\\(tenant_id\\)s"
 
+# heat
+openstack_heat_db_password: "{{ openstack_admin_password }}"
+openstack_heat_keystone_password: "{{ openstack_admin_password }}"
+openstack_heat_metadata: "http://{{ openstack_controller_host }}:8000"
+openstack_heat_waitcondition: "http://{{ openstack_controller_host }}:8000/v1/waitcondition"
+
+openstack_heat_stack_user_role: "heat_stack_user"
+openstack_heat_stack_user_domain_name: "heat"
+openstack_heat_stack_domain_admin: "heat_domain_admin"
+openstack_heat_stack_domain_admin_password: "{{ openstack_admin_password }}"
+openstack_heat_stack_owner_role: "heat_stack_owner"
+
+openstack_heat_trustee_username: "heat"
+openstack_heat_trustee_password: "{{ openstack_admin_password }}"
+
+openstack_heat_adminurl: "http://{{ openstack_admin_vip }}:8004/v1/%\\(tenant_id\\)s"
+openstack_heat_internalurl: "http://{{ openstack_internal_vip }}:8004/v1/%\\(tenant_id\\)s"
+openstack_heat_publicurl: "http://{{ openstack_public_vip }}:8004/v1/%\\(tenant_id\\)s"
+
+openstack_heat_adminurl_heat-cfn: "http://{{ openstack_admin_vip }}:8000/v1"
+openstack_heat_internalurl_heat-cfn: "http://{{ openstack_internal_vip }}:8000/v1"
+openstack_heat_publicurl_heat-cfn: "http://{{ openstack_public_vip }}:8000/v1"
+
+
 ## auth env
 token_auth_env:
   OS_TOKEN: "{{ openstack_admin_token }}"
@@ -122,8 +146,8 @@ openstack_external_subnet_pool_end: 192.168.1.128
 
 openstack_demo_net_name: demo_net
 openstack_demo_subnet_name: demo_subnet
-openstack_demo_subnet_gateway: 192.168.200.254
-openstack_demo_subnet_cidr: 192.168.200.0/24
+openstack_demo_subnet_gateway: 192.168.2.254
+openstack_demo_subnet_cidr: 192.168.2.0/24
 openstack_demo_dns_servers: '8.8.8.8 8.8.8.4'
 
 openstack_demo_router: "router1"

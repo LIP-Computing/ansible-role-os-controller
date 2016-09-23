@@ -1,0 +1,58 @@
+[DEFAULT]
+debug = False
+verbose = True
+
+heat_metadata_server_url = {{ openstack_heat_metadata }}
+heat_waitcondition_server_url = {{ openstack_heat_waitcondition }}
+
+region_name_for_services = {{ openstack_keystone_auth_region }}
+heat_stack_user_role = {{ openstack_heat_stack_user_role }}
+stack_user_domain_name = {{ openstack_heat_stack_user_domain_name }}
+stack_domain_admin = {{ openstack_heat_stack_domain_admin }}
+stack_domain_admin_password = {{ openstack_heat_stack_domain_admin_password }}
+
+log_dir = /var/log/heat
+
+rpc_backend = rabbit
+
+[clients_keystone]
+auth_uri = {{ openstack_ath_uri }}
+
+[database]
+connection = "mysql+pymysql://keystone:{{ openstack_heat_db_password }}@{{ openstack_database_host }}/heat"
+
+[ec2authtoken]
+auth_uri = {{ openstack_endpoint_internal_url }}
+
+[heat_api]
+bind_host = 0.0.0.0
+bind_port = 8004
+
+[heat_api_cfn]
+bind_host = 0.0.0.0
+bind_port = 8000
+
+[keystone_authtoken]
+auth_uri = {{ openstack_ath_uri }}
+auth_url = {{ openstack_ath_url }}
+auth_plugin = password
+project_domain_id = default
+user_domain_id = default
+project_name = service
+username = neutron
+password = {{ openstack_heat_keystone_password }}
+
+[oslo_policy]
+policy_file = /etc/heat/policy.json
+
+[oslo_messaging_rabbit]
+rabbit_host = {{ openstack_rabbit_host }}
+rabbit_userid = {{ openstack_rabbit_user }}
+rabbit_password = {{ openstack_rabbit_pass }}
+
+[trustee]
+auth_plugin = password
+auth_url = {{ openstack_ath_url }}
+username = {{ openstack_heat_trustee_username }}
+password = {{ openstack_heat_trustee_password }}
+user_domain_id = default

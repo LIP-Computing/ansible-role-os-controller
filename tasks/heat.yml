@@ -1,0 +1,107 @@
+# Deployment and configuration of heat
+---
+# CONFIGURE HEAT USERS, DOMAINS, ROLES, AND PROJECTS
+
+- name: "Create {{ openstack_heat_stack_user_domain_name }} user in service project"
+  include: openstack/create_user_in_project.yml
+  vars:
+    username: {{ openstack_heat_stack_user_domain_name }}
+    password: "{{ openstack_admin_password }}"
+    project: service
+    role: admin
+
+- name: Create the service entity for heat.
+  include: openstack/create_service.yml
+  vars:
+    name: heat
+    type: orchestration
+    description: Orchestration
+
+- name: Create the service entity for heat-cfn.
+  include: openstack/create_service.yml
+  vars:
+    name: heat-cfn
+    type: cloudformation
+    description: Orchestration
+
+- name: Create the API endpoint for heat.
+  include: openstack/create_endpoint.yml
+  vars:
+    service: orquestation
+    region: RegionOne
+    endpoints:
+      adminurl: "{{ openstack_heat_adminurl }}"
+      internalurl: "{{ openstack_heat_internalurl }}"
+      publicurl: "{{ openstack_heat_publicurl }}"
+
+- name: Create the API endpoint for heat-cf.
+  include: openstack/create_endpoint.yml
+  vars:
+    service: cloudformation
+    region: RegionOne
+    endpoints:
+      adminurl: "{{ openstack_heat_adminurl_heat-cfn }}"
+      internalurl: "{{ openstack_heat_internalurl_heat-cfn }}"
+      publicurl: "{{ openstack_heat_publicurl_heat-cfn }}"
+
+- name: "Create domain {{ openstack_heat_stack_user_domain_name }}".
+  include: openstack/create_domain.yml
+  vars:
+    domain: "{{ openstack_heat_stack_user_domain_name }}"
+    description: "Stack projects and users"
+
+- name: "Create {{ openstack_heat_stack_domain_admin }} user {{ openstack_heat_stack_user_domain_name }} in domain"
+  include: openstack/create_user_in_project.yml
+  vars:
+    username: {{ openstack_heat_stack_user_domain_name }}
+    password: "{{ openstack_admin_password }}"
+    domain: "{{ openstack_heat_stack_user_domain_name }}"
+    role: admin
+
+- name: "Create {{ openstack_heat_stack_owner_role }} role"
+  include: openstack/create_role.yml
+  vars:
+    role: "{{ openstack_heat_stack_owner_role }}"
+
+- name: "Add role to {{ openstack_heat_stack_owner_role }} demo role"
+  include: openstack/create_role.yml
+  vars:
+    username: {{ openstack_user_name }}
+    role: "{{ openstack_heat_stack_owner_role }}"
+    project: "{{ openstack_user_project }}
+
+- name: "Create {{ openstack_heat_stack_user_role }} role"
+  include: openstack/create_role.yml
+  vars:
+    role: "{{ openstack_heat_stack_user_role }}"
+
+## INSTALL AND CONFIGURE
+
+- name: Install heat
+  yum: name={{ item }} state=latest
+  with_items:
+    - openstack-heat-api
+    - openstack-heat-api-cfn
+    - openstack-heat-engine
+    - python-heatclient
+
+- name: Copy template file heat
+  template:
+    src=templates/heat.conf.j2
+    dest=/etc/heat/heat.conf
+    mode=0640
+    owner=heat
+    group=heat
+    backup=yes
+
+- name:  Create heat tables in DB
+  shell: heat-manage db_sync
+  become_user: heat
+  run_once: True
+
+- name: Restart services
+  service: name={{ item }} enabled=yes state=restarted
+  with_items:
+    - openstack-heat-api
+    - openstack-heat-api-cfn
+    - openstack-heat-engine
