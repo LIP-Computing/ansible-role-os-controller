@@ -1,5 +1,14 @@
 # Deployment and configuration of heat
 ---
+# Prerequisites
+- name: Prepare Database for heat.
+  include: database.yml
+  vars:
+    db_name: "{{ openstack_heat_db_name }}"
+    db_user: "{{ openstack_heat_db_user }}"
+    db_password: "{{ openstack_heat_db_password }}"
+  tags: database
+
 # CONFIGURE HEAT USERS, DOMAINS, ROLES, AND PROJECTS
 
 - name: "Create {{ openstack_heat_stack_user_domain_name }} user in service project"
@@ -27,7 +36,7 @@
 - name: Create the API endpoint for heat.
   include: openstack/create_endpoint.yml
   vars:
-    service: orquestation
+    service: orchestration
     region: RegionOne
     endpoints:
       adminurl: "{{ openstack_heat_adminurl }}"
@@ -53,7 +62,7 @@
 - name: "Create {{ openstack_heat_stack_domain_admin }} user {{ openstack_heat_stack_user_domain_name }} in domain"
   include: openstack/create_user_in_domain.yml
   vars:
-    username: "{{ openstack_heat_stack_user_domain_name }}"
+    username: "{{ openstack_heat_stack_domain_admin }}"
     password: "{{ openstack_admin_password }}"
     domain: "{{ openstack_heat_stack_user_domain_name }}"
     role: admin

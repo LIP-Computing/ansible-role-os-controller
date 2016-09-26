@@ -93,6 +93,8 @@ openstack_cinder_intelnalurl_v2: "http://{{ openstack_internal_vip }}:8776/v2/%\
 openstack_cinder_publicurl_v2: "http://{{ openstack_public_vip }}:8776/v2/%\\(tenant_id\\)s"
 
 # heat
+openstack_heat_db_name: "heat"
+openstack_heat_db_user: "heat"
 openstack_heat_db_password: "{{ openstack_admin_password }}"
 openstack_heat_keystone_password: "{{ openstack_admin_password }}"
 openstack_heat_metadata: "http://{{ openstack_controller_host }}:8000"

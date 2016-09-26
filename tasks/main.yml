@@ -30,6 +30,9 @@
 # cinder
 - include: cinder.yml
 
+# heat
+- include: heat.yml
+
 # firewall
 - include: firewall.yml
 
