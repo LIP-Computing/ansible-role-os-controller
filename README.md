@@ -12,6 +12,7 @@ Services provided are the following:
 * neutron
 * horizon
 * cinder
+* heat
 
 In addition a network node is installed in the same host. The network configuration is based in openvswitch.
 
