@@ -79,7 +79,7 @@
 
 - name: Create Router "{{ openstack_demo_router }}".
   shell: |
-        neutron router-create {{ openstack_demo_router }}
+        neutron router-create {{ openstack_demo_router }} --tenant-id {{ openstack_demo_tenant_id.stdout }}
   become_user: neutron
   run_once: True
   when: routerdemoExist|failed
