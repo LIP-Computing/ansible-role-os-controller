@@ -117,6 +117,15 @@ openstack_heat_adminurl_heat_cfn: "http://{{ openstack_admin_vip }}:8000/v1"
 openstack_heat_internalurl_heat_cfn: "http://{{ openstack_internal_vip }}:8000/v1"
 openstack_heat_publicurl_heat_cfn: "http://{{ openstack_public_vip }}:8000/v1"
 
+#swift
+openstack_swift_db_name: "swift"
+openstack_swift_db_user: "swift"
+openstack_swift_db_password: "{{ openstack_admin_password }}"
+openstack_swift_keystone_password: "{{ openstack_admin_password }}"
+openstack_swift_adminurl: "http://{{ openstack_admin_vip }}:8080/v1"
+openstack_swift_intelnalurl:  "http://{{ openstack_public_vip }}:8080/v1/AUTH_%\\(tenant_id\\)s"
+openstack_swift_publicurl: "http://{{ openstack_public_vip }}:8080/v1/AUTH_%\\(tenant_id\\)s"
+openstack_swift_keystone_password: "{{ openstack_admin_password }}"
 
 ## auth env
 token_auth_env:

@@ -1,0 +1,60 @@
+# Deployment and configuration of swift
+---
+# Prerequisites
+- name: Prepare Database for swift.
+  include: database.yml
+  vars:
+    db_name: "{{ openstack_swift_db_name }}"
+    db_user: "{{ openstack_swift_db_user }}"
+    db_password: "{{ openstack_swift_db_password }}"
+  tags: database
+
+- name: Create the service user for neutron.
+  include: openstack/create_user_in_project.yml
+  vars:
+    username: swift
+    password: "{{ openstack_swift_keystone_password }}"
+    project: service
+    role: admin
+
+- name: Create the service entity for swift.
+  include: openstack/create_service.yml
+  vars:
+    name: swift
+    type: object-store
+    description: OpenStack Object Storage
+
+- name: Create the API endpoint for swift.
+  include: openstack/create_endpoint.yml
+  vars:
+    service: object-store
+    region: RegionOne
+    endpoints:
+      adminurl: "{{ openstack_swift_adminurl }}"
+      internalurl: "{{ openstack_swift_intelnalurl }}"
+      publicurl: "{{ openstack_swift_publicurl }}"
+
+- name: Install swift
+  yum: name={{ item }} state=latest
+  with_items:
+   - openstack-swift-proxy
+   - python-swiftclient
+   - python-keystoneclient
+   - python-keystonemiddleware
+   - memcached
+
+- name: Copy template file swift
+  template:
+    src=templates/swift/proxy-server.conf.j2
+    dest=/etc/swift/proxy-server.conf
+    mode=0640
+    owner=swift
+    group=swift
+    backup=yes
+
+- name: Ensure images service is started and enabled on boot
+  service: name={{ item }} enabled=yes state=started
+  with_items:
+    - openstack-swift-proxy
+    - memcached
+
