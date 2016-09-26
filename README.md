@@ -124,6 +124,31 @@ The variables are related to the Openstack version, endpoints, IPs, passwords:
     openstack_cinder_intelnalurl_v2: cinder internal url ("http://{{ openstack_internal_vip }}:8776/v2/%\\(tenant_id\\)s" by default)
     openstack_cinder_publicurl_v2: cinder public url ("http://{{ openstack_public_vip }}:8776/v2/%\\(tenant_id\\)s" by default)
     
+    #Heat
+    openstack_heat_db_name: heat database name ("heat" by default)
+    openstack_heat_db_user: heat database user ("heat" by default)
+    openstack_heat_db_password: heat database password ("{{ openstack_admin_password }}" by default)
+    openstack_heat_keystone_password: heat keystone password ("{{ openstack_admin_password }}" by default)
+    openstack_heat_metadata: heat metadata url ("http://{{ openstack_controller_host }}:8000" by default)
+    openstack_heat_waitcondition: heat wait condition ("http://{{ openstack_controller_host }}:8000/v1/waitcondition" by default)
+    
+    openstack_heat_stack_user_role: heat stack user role ("heat_stack_user" by default)
+    openstack_heat_stack_user_domain_name: heat stack user domain ("heat" by default)
+    openstack_heat_stack_domain_admin: heat stack domain admin ("heat_domain_admin" by default)
+    openstack_heat_stack_domain_admin_password: heat stack domain admin password ("{{ openstack_admin_password }}" by default)
+    openstack_heat_stack_owner_role: heat stack owner role ("heat_stack_owner" by default)
+    
+    openstack_heat_trustee_username: heat trustee user name ("heat" by default)
+    openstack_heat_trustee_password: heat trustee password ("{{ openstack_admin_password }}" by default)
+    
+    openstack_heat_adminurl: heat admin url ("http://{{ openstack_admin_vip }}:8004/v1/%\\(tenant_id\\)s" by default)
+    openstack_heat_internalurl: heat internal url ("http://{{ openstack_internal_vip }}:8004/v1/%\\(tenant_id\\)s" by default)
+    openstack_heat_publicurl: heat public url ("http://{{ openstack_public_vip }}:8004/v1/%\\(tenant_id\\)s" by default)
+    
+    openstack_heat_adminurl_heat_cfn: heat-cfn admin url ("http://{{ openstack_admin_vip }}:8000/v1" by default)
+    openstack_heat_internalurl_heat_cfn: heat-cfn internal url ("http://{{ openstack_internal_vip }}:8000/v1" by default)
+    openstack_heat_publicurl_heat_cfn: heat-cfn public url ("http://{{ openstack_public_vip }}:8000/v1" by default)
+    
     # token auth env, use in the openstack admin commands
     token_auth_env:
       OS_TOKEN: admin token ("{{ openstack_admin_token }}" by default)
