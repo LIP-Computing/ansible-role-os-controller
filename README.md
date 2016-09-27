@@ -15,6 +15,7 @@ Services provided are the following:
 * heat
 
 In addition a network node is installed in the same host. The network configuration is based in openvswitch.
+This role provide a task to create the initial networks, which fails in case all the services are not still up.
 
 It has been tested with Openstack Liberty on Centos 7.
 
@@ -273,6 +274,8 @@ FAQ
 * Services does not start after rebooting the virtual machine (VM)
  * If you have install the controller in a VM provided by openstack, you have to set the hostname every time that the VM restars.
  * Rabbit depends of the hostname. If the hostname changes, rabbit needs to be reinstalled.
+* Create initial networks fail.
+ * Fails in case all the services are not still up. Wait some time and execute again.
 
 
 Author Information
