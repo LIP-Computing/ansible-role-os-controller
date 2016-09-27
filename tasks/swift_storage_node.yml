@@ -1,0 +1,41 @@
+# Deployment and configuration of a swift storage node
+---
+# Prerequisites
+
+- name: Install swift storage node
+  yum: name={{ item }} state=latest
+  with_items:
+    - openstack-swift-account
+    - openstack-swift-container
+    - openstack-swift-object
+
+
+- name: Deploy swift configuration files from templates
+  template: src={{ item.src }} dest={{ item.dest }} mode=0755 owner=root group=swift backup=yes
+  with_items:
+    - { src: 'swift/account-server.conf.j2', dest: '/etc/swift/account-server.conf' }
+    - { src: 'swift/container-server.conf.j2', dest: '/etc/swift/container-server.conf' }
+    - { src: 'swift/object-server.conf.j2', dest: '/etc/swift/object-server.conf' }
+
+- name: "Chown /srv/node/ to swift"
+  file: recurse=yes path=/srv/node state=directory mode=0755 owner=swift group=swift
+
+
+- name: "Create /srv/node/ to swift"
+  file: path=/var/cache/swift state=directory mode=0755 owner=root group=swift
+
+- name: Ensure services are started and enabled on boot
+  service: name={{ item }} enabled=yes state=started
+  with_items:
+    - openstack-swift-account
+    - openstack-swift-account-auditor
+    - openstack-swift-account-reaper
+    - openstack-swift-account-replicator
+    - openstack-swift-container
+    - openstack-swift-container-auditor
+    - openstack-swift-container-replicator
+    - openstack-swift-container-updater
+    - openstack-swift-object
+    - openstack-swift-object-auditor
+    - openstack-swift-object-replicator
+    - openstack-swift-object-updater

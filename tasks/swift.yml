@@ -1,6 +1,55 @@
 # Deployment and configuration of swift
 ---
-# Prerequisites
+#################
+# Prerequisites #
+#################
+#  yum install xfsprogs -y
+#  yum install rsync -y
+#
+# Create devices
+# - $ truncate --size=2G /tmp/swiftstorage1
+# - $ truncate --size=2G /tmp/swiftstorage2
+# - $ DEVICE1=$(losetup --show -f /tmp/swiftstorage1)
+# - $ DEVICE2=$(losetup --show -f /tmp/swiftstorage2)
+# - $ mkfs.xfs $DEVICE1
+# - $ mkfs.xfs $DEVICE2
+# - $ mkdir -p /srv/node/sdb
+# - $ mkdir -p /srv/node/sdc
+# - $ vi /etc/fstab
+# /dev/loop0 /srv/node/sdb xfs noatime,nodiratime,nobarrier,logbufs=8 0 2
+# /dev/loop1 /srv/node/sdc xfs noatime,nodiratime,nobarrier,logbufs=8 0 2
+# - $ mount /srv/node/sdb
+# - $ mount /srv/node/sdc
+#
+# Configure and run rsync (
+# - $ vi /etc/rsyncd.conf
+#  uid = swift
+#  gid = swift
+#  log file = /var/log/rsyncd.log
+#  pid file = /var/run/rsyncd.pid
+#  address = 127.0.0.1
+#
+#  [account]
+#  max connections = 2
+#  path = /srv/node/
+#  read only = false
+#  lock file = /var/lock/account.lock
+#
+#  [container]
+#  max connections = 2
+#  path = /srv/node/
+#  read only = false
+#  lock file = /var/lock/container.lock
+#
+#  [object]
+#  max connections = 2
+#  path = /srv/node/
+#  read only = false
+#  lock file = /var/lock/object.lock
+#  systemctl enable rsyncd
+#  systemctl start rsyncd
+
+#Database
 - name: Prepare Database for swift.
   include: database.yml
   vars:
@@ -9,7 +58,7 @@
     db_password: "{{ openstack_swift_db_password }}"
   tags: database
 
-- name: Create the service user for neutron.
+- name: Create the service user for swift.
   include: openstack/create_user_in_project.yml
   vars:
     username: swift
@@ -34,6 +83,8 @@
       internalurl: "{{ openstack_swift_intelnalurl }}"
       publicurl: "{{ openstack_swift_publicurl }}"
 
+# install
+
 - name: Install swift
   yum: name={{ item }} state=latest
   with_items:
@@ -43,7 +94,8 @@
    - python-keystonemiddleware
    - memcached
 
-- name: Copy template file swift
+# configure files
+- name: Copy template file proxy server
   template:
     src=templates/swift/proxy-server.conf.j2
     dest=/etc/swift/proxy-server.conf
@@ -52,9 +104,82 @@
     group=swift
     backup=yes
 
-- name: Ensure images service is started and enabled on boot
+- name: Copy template file swift
+  template:
+    src=templates/swift/swift.conf.j2
+    dest=/etc/swift/swift.conf
+    mode=0755
+    owner=root
+    group=swift
+    backup=yes
+
+# ring configuration
+- name: "Create the base account.builder"
+  command:  swift-ring-builder account.builder create 10 3 1
+  args:
+    chdir: /etc/swift
+
+- name: "Add sdb storage node to the ring"
+  command:  swift-ring-builder account.builder add --region 1 --zone 1 --ip {{ openstack_swift_node_ip }}  --port 6002 --device sdb --weight {{ openstack_swift_node_weight }}
+  args:
+    chdir: /etc/swift
+
+- name: "Add sdc storage node to the ring"
+  command:  swift-ring-builder account.builder add --region 1 --zone 1 --ip {{ openstack_swift_node_ip }}  --port 6002 --device sdc --weight {{ openstack_swift_node_weight }}
+  args:
+    chdir: /etc/swift
+
+- name: "Rebalance the ring"
+  command:  swift-ring-builder account.builder rebalance
+  args:
+    chdir: /etc/swift
+
+- name: "Create the container.builder"
+  command:  swift-ring-builder container.builder create 10 3 1
+  args:
+    chdir: /etc/swift
+
+- name: "Add container sdb storage node to the ring"
+  command:  swift-ring-builder container.builder add --region 1 --zone 1 --ip {{ openstack_swift_node_ip }}  --port 6001 --device sdb --weight {{ openstack_swift_node_weight }}
+  args:
+    chdir: /etc/swift
+
+- name: "Add container sdc storage node to the ring"
+  command:  swift-ring-builder container.builder add --region 1 --zone 1 --ip {{ openstack_swift_node_ip }}  --port 6001 --device sdc --weight {{ openstack_swift_node_weight }}
+  args:
+    chdir: /etc/swift
+
+- name: "Rebalance the container ring"
+  command:  swift-ring-builder container.builder rebalance
+  args:
+    chdir: /etc/swift
+
+- name: "Create the object.builder"
+  command:  swift-ring-builder object.builder create 10 3 1
+  args:
+    chdir: /etc/swift
+
+- name: "Add object sdb storage node to the ring"
+  command:  swift-ring-builder object.builder add --region 1 --zone 1 --ip {{ openstack_swift_node_ip }}  --port 6000 --device sdb --weight {{ openstack_swift_node_weight }}
+  args:
+    chdir: /etc/swift
+
+- name: "Add object sdc storage node to the ring"
+  command:  swift-ring-builder object.builder add --region 1 --zone 1 --ip {{ openstack_swift_node_ip }}  --port 6000 --device sdc --weight {{ openstack_swift_node_weight }}
+  args:
+    chdir: /etc/swift
+
+- name: "Rebalance the object ring"
+  command:  swift-ring-builder object.builder rebalance
+  args:
+    chdir: /etc/swift
+
+# Copy the account.ring.gz, container.ring.gz, and object.ring.gz files to the /etc/swift directory on each storage node and any additional nodes running the proxy service
+
+- name: Ensure services are started and enabled on boot
   service: name={{ item }} enabled=yes state=started
   with_items:
-    - openstack-swift-proxy
     - memcached
+    - openstack-swift-proxy
+
 

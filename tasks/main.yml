@@ -1,44 +1,50 @@
 ---
 # tasks file for ansible-role-openstack-controller
 
-- name: Configure open file limit for OpenStack services.
-  template: src=nofile-limits.conf.j2 dest=/etc/security/limits.d/30-nofile.conf
-  tags: limits
-
-# Prepare deployment
-- include: host-config.yml
-
-- include: pre-deploy.yml
+#- name: Configure open file limit for OpenStack services.
+#  template: src=nofile-limits.conf.j2 dest=/etc/security/limits.d/30-nofile.conf
+#  tags: limits
 #
-- include: chrony.yml
+## Prepare deployment
+#- include: host-config.yml
 #
-# keystone
-- include: keystone.yml
-
-# glance
-- include: glance.yml
+#- include: pre-deploy.yml
+##
+#- include: chrony.yml
+##
+## keystone
+#- include: keystone.yml
 #
-## nova
-- include: nova.yml
+## glance
+#- include: glance.yml
+##
+### nova
+#- include: nova.yml
+#
+## neutron
+#- include: neutron.yml
+#
+## horizon
+#- include: horizon.yml
+#
+## cinder
+#- include: cinder.yml
+#
+## heat
+#- include: heat.yml
+#
+## swift controlller
+- include: swift.yml
 
-# neutron
-- include: neutron.yml
-
-# horizon
-- include: horizon.yml
-
-# cinder
-- include: cinder.yml
-
-# heat
-- include: heat.yml
-
-# firewall
-- include: firewall.yml
-
-# initital networks
-
-- include: openstack/create_networks.yml
-  when: "{{ openstack_create_inital_networks }}"
+## swift storage node
+- include: swift_storage_node.yml
+#
+## firewall
+#- include: firewall.yml
+#
+## initital networks
+#
+#- include: openstack/create_networks.yml
+#  when: "{{ openstack_create_inital_networks }}"
 
 

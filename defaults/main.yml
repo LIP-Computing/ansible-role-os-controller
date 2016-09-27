@@ -126,6 +126,10 @@ openstack_swift_adminurl: "http://{{ openstack_admin_vip }}:8080/v1"
 openstack_swift_intelnalurl:  "http://{{ openstack_public_vip }}:8080/v1/AUTH_%\\(tenant_id\\)s"
 openstack_swift_publicurl: "http://{{ openstack_public_vip }}:8080/v1/AUTH_%\\(tenant_id\\)s"
 openstack_swift_keystone_password: "{{ openstack_admin_password }}"
+openstack_swift_node_ip: 127.0.0.1
+openstack_swift_node_weight: 100
+openstack_swift_hash_suffix: "1suffix2"
+openstack_swift_hash_prefix: "1prefix2"
 
 ## auth env
 token_auth_env:
