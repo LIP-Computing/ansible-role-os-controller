@@ -1,0 +1,169 @@
+global
+    log         127.0.0.1 local2
+    pidfile     /var/run/haproxy.pid
+    maxconn     4000
+    user        haproxy
+    group       haproxy
+    daemon
+    tune.ssl.default-dh-param 2048
+
+defaults
+    mode    http
+    log     global
+    option  dontlognull
+    option  httplog
+    option  redispatch
+    option  forwardfor
+    option  http-server-close
+    option  tcpka
+    retries                 3
+    timeout http-request    10s
+    timeout queue           1m
+    timeout connect         10s
+    timeout client          1m
+    timeout server          1m
+    timeout http-keep-alive 10s
+    timeout check           10s
+
+#############################################################################
+# Keystone
+#############################################################################
+frontend keystone_api
+  bind {{ openstack_controller_ip }}:5000 ssl crt {{ openstack_ssl_cert_location }}
+  #bind {{ openstack_controller_public_ip }}:5000 ssl crt {{ openstack_ssl_cert_location }}
+  redirect scheme https if !{ ssl_fc }
+  reqadd X-Forwarded-Proto:\ https
+  default_backend keystone_api_back
+  
+backend keystone_api_back
+  balance source
+  option httpchk
+  server {{ openstack_controller_host }} {{ openstack_controller_ip }}:5000 check inter 2000 rise 2 fall 5
+        
+frontend keystone_admin_api
+  bind {{ openstack_controller_ip }}:5000 ssl crt {{ openstack_ssl_cert_location }}
+  redirect scheme https if !{ ssl_fc }
+  reqadd X-Forwarded-Proto:\ https
+  default_backend keystone_admin_api_back
+
+backend keystone_admin_api_back
+  balance source
+  option httpchk
+  server {{ openstack_controller_host }} {{ openstack_controller_ip }}:5000 check inter 2000 rise 2 fall 5
+
+#############################################################################
+# Dashboard - http
+#############################################################################
+frontend http
+  bind {{ openstack_controller_ip }}:80
+  #bind {{ openstack_controller_public_ip }}:80
+  redirect scheme https if !{ ssl_fc }
+  default_backend dashboard
+
+frontend https
+  bind {{ openstack_controller_ip }}:443 ssl crt {{ openstack_ssl_cert_location }}
+  #bind {{ openstack_controller_public_ip }}:443 ssl crt {{ openstack_ssl_cert_location }}
+  reqadd X-Forwarded-Proto:\ https
+  default_backend dashboard
+ 
+# the location must be rewritten because the dashboard returns http instead of https although
+# in Horizon / Django we have SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
+backend dashboard
+  balance source
+  cookie SERVERID insert indirect nocache
+  option httpchk
+  rspidel ^Set-cookie:\ IP=
+  rsprep ^Location:\ http:(.*)   Location:\ https:\1
+#  http-request add-header X-Forwarded-Proto https
+  server {{ openstack_controller_host }} {{ openstack_controller_ip }}:80 cookie nimbus03 check inter 2000 rise 2 fall 5
+
+
+#############################################################################
+# Heat-API and Heat-API-cfn
+#############################################################################
+frontend heat-api
+  option httplog
+  option logasap
+  bind {{ openstack_controller_ip }}:8004 ssl crt {{ openstack_ssl_cert_location }}
+  #bind {{ openstack_controller_public_ip }}:8004 ssl crt {{ openstack_ssl_cert_location }}
+  reqadd X-Forwarded-Proto:\ https
+  default_backend heat-api_back
+
+backend heat-api_back
+  balance source
+  option httpchk
+  server n{{ openstack_controller_host }} {{ openstack_controller_ip }}:8004 check inter 2000 rise 2 fall 5
+
+frontend heat-api-cfn
+  option httplog
+  option logasap
+  bind {{ openstack_controller_ip }}:8000 ssl crt {{ openstack_ssl_cert_location }}
+  #bind {{ openstack_controller_public_ip }}:8000 ssl crt {{ openstack_ssl_cert_location }}
+  reqadd X-Forwarded-Proto:\ https
+  default_backend heat-api-cfn_back
+
+backend heat-api-cfn_back
+  balance source
+  option httpchk
+  server {{ openstack_controller_host }} {{ openstack_controller_ip }}:8000 check inter 2000 rise 2 fall 5
+
+#############################################################################
+# Nova: OS API, OCCI API, EC2 API, Metadata
+#############################################################################
+
+frontend nova_osapi
+  bind {{ openstack_controller_ip }}:8774 ssl crt {{ openstack_ssl_cert_location }}
+  #bind {{ openstack_controller_public_ip }}:8774 ssl crt {{ openstack_ssl_cert_location }}
+  reqadd X-Forwarded-Proto:\ https
+  default_backend nova_osapi_back
+  
+backend nova_osapi_back
+  balance source
+  server {{ openstack_controller_host }} {{ openstack_controller_ip }}:8774 check inter 2000 rise 2 fall 5
+
+frontend nova_ooi
+  bind {{ openstack_controller_ip }}:8787 ssl crt {{ openstack_ssl_cert_location }}
+  #bind {{ openstack_controller_public_ip }}:8787 ssl crt {{ openstack_ssl_cert_location }}
+  reqadd X-Forwarded-Proto:\ https
+  default_backend nova_ooi_back
+  
+backend nova_ooi_back
+  balance source
+  server {{ openstack_controller_host }} {{ openstack_controller_ip }}:8787 check inter 2000 rise 2 fall 5
+
+frontend nova_metadata
+  bind {{ openstack_controller_ip }}:8775
+  default_backend nova_metadata_back
+  
+backend nova_metadata_back
+  balance source
+  server {{ openstack_controller_host }} {{ openstack_controller_ip }}:8775 check inter 2000 rise 2 fall 5
+
+#############################################################################
+# Neutron API
+#############################################################################
+frontend neutron
+  bind {{ openstack_controller_ip }}:9696 ssl crt {{ openstack_ssl_cert_location }}
+  #bind {{ openstack_controller_public_ip }}:9696 ssl crt {{ openstack_ssl_cert_location }}
+  reqadd X-Forwarded-Proto:\ https
+  default_backend neutron_back
+  
+backend neutron_back
+  balance source
+  server {{ openstack_controller_host }} {{ openstack_controller_ip }}:9696 check inter 2000 rise 2 fall 5
+
+#############################################################################
+# novcnc
+#############################################################################
+
+frontend novnc
+  bind {{ openstack_controller_ip }}:6080 ssl crt {{ openstack_ssl_cert_location }}
+  #bind {{ openstack_controller_public_ip }}:6080 ssl crt /etc/haproxy/host.pem
+  reqadd X-Forwarded-Proto:\ https
+  default_backend novnc_back
+
+backend novnc_back
+  balance source
+#  option httpchk
+  server {{ openstack_controller_host }} {{ openstack_controller_ip }}:6080 check inter 2000 rise 2 fall 5
+

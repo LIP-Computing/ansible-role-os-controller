@@ -1,0 +1,19 @@
+---
+
+- name: Install haproxy and keepalived
+  yum: name={{ item }} state=latest
+  with_items:
+    - haproxy
+    - keepalived
+- name: Copy file haproxy
+  template:
+    src=templates/haproxy/haproxy.cfg.j2
+    dest=/etc/haproxy/haproxy.cfg
+    mode=0644
+    owner=haproxy
+    group=haproxy
+    backup=yes
+- name: Restart service
+  service: name={{ item }} enabled=yes state=restarted
+  with_items:
+    - haproxy

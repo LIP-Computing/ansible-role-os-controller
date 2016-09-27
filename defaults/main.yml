@@ -1,17 +1,30 @@
 ---
 # defaults file for ansible-role-openstack-controller
 
+######################
+# installation modes #
+######################
+# SSL
+openstack_configure_haproxy: False
+#Network
+openstack_create_inital_networks: False
+
+#################
+# configuration #
+#################
 openstack_soft_nofile_limits: 102400
 openstack_hard_nofile_limits: 102400
 
+# host
+openstack_controller_host: "localhost"
 openstack_controller_ip: 127.0.0.1
 openstack_cidr: 127.0.0.0/8
 openstack_memcached_servers: localhost:11211
-
-#
 openstack_admin_vip: "{{ openstack_controller_host }}"
 openstack_internal_vip: "{{ openstack_controller_host }}"
 openstack_public_vip: "{{ openstack_controller_host }}"
+
+# keystone endpoint
 openstack_os_url: "http://{{ openstack_controller_host }}:35357/v3"
 openstack_os_identity_api_version: "3"
 openstack_ath_uri: "http://{{ openstack_admin_vip }}:5000"
@@ -42,7 +55,6 @@ openstack_keystone_config_default_verbose: False
 openstack_keystone_config_token_provider: "uuid"
 openstack_keystone_config_token_driver: "sql"
 openstack_keystone_config_revoke_driver: "sql"
-#openstack_keystone_service_name: keystone
 openstack_keystone_auth_region: RegionOne
 
 openstack_user_name: "demo"
@@ -137,7 +149,6 @@ admin_auth_env:
 openstack_neutron_bridge_interface: "br-ex"
 
 # Create networks
-openstack_create_inital_networks: False
 openstack_external_net_name: "public"
 openstack_external_subnet_name: "public"
 openstack_external_subnet_gateway: 192.168.1.254
@@ -153,3 +164,8 @@ openstack_demo_subnet_cidr: 192.168.2.0/24
 openstack_demo_dns_servers: '8.8.8.8 8.8.8.4'
 
 openstack_demo_router: "router1"
+
+# ssl cert
+ssl_certs_common_name: "controller.com"
+openstack_ssl_cert_location: "/etc/haproxy/host.pem"
+#"/etc/haproxy/{{ ssl_certs_common_name }}/{{ ssl_certs_common_name }}.pem"

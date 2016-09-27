@@ -11,6 +11,9 @@
 - include: pre-deploy.yml
 #
 - include: chrony.yml
+# haproxy
+- include : haproxy.yml
+  when: "{{ openstack_configure_haproxy }}"
 #
 # keystone
 - include: keystone.yml
