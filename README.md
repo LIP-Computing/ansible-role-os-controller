@@ -276,7 +276,8 @@ FAQ
  * Rabbit depends of the hostname. If the hostname changes, rabbit needs to be reinstalled.
 * Create initial networks fail.
  * Fails in case all the services are not still up. Wait some time and execute again.
-
+* Instances are not accesible.
+ * iptables block the instance access. Modify it or stop it.
 
 Author Information
 ------------------
