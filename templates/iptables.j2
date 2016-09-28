@@ -42,16 +42,16 @@
 -A INPUT -p tcp -m multiport --ports 8700 -m comment --comment "001 metadata incoming" -j ACCEPT
 
 # Memcached
--A INPUT -s 10.197.0.0/16  -p tcp  --dport 11211                        -j ACCEPT
+-A INPUT -p tcp  --dport 11211                        -j ACCEPT
 
 # Heat API
--A INPUT -s 10.197.0.0/16   -p tcp  --dport 8004                         -j ACCEPT
+-A INPUT -p tcp  --dport 8004                         -j ACCEPT
 
 # Heat API cfn
--A INPUT -s 10.197.0.0/16   -p tcp  --dport 8000                         -j ACCEPT
+-A INPUT -p tcp  --dport 8000                         -j ACCEPT
 
 # Nova OCCI
--A INPUT -s 10.197.0.0/16   -p tcp  --dport 8787                         -j ACCEPT
+-A INPUT -p tcp  --dport 8787                         -j ACCEPT
 
 
 #SSH
