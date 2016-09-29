@@ -136,20 +136,3 @@ admin_auth_env:
 
 openstack_neutron_bridge_interface: "br-ex"
 
-# Create networks
-openstack_create_inital_networks: False
-openstack_external_net_name: "public"
-openstack_external_subnet_name: "public"
-openstack_external_subnet_gateway: 192.168.1.254
-openstack_external_subnet_cird: 192.168.1.0/24
-openstack_external_subnet_pool_start: 192.168.1.1
-openstack_external_subnet_pool_end: 192.168.1.128
-
-
-openstack_demo_net_name: demo_net
-openstack_demo_subnet_name: demo_subnet
-openstack_demo_subnet_gateway: 192.168.2.254
-openstack_demo_subnet_cidr: 192.168.2.0/24
-openstack_demo_dns_servers: '8.8.8.8 8.8.8.4'
-
-openstack_demo_router: "router1"

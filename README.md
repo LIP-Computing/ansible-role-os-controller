@@ -169,24 +169,8 @@ The variables are related to the Openstack version, endpoints, IPs, passwords:
     # Networks:
     
     openstack_neutron_bridge_interface: external bridge of openvswitch ("br-ex" by default)
-    
-    # Create inital networks
-    openstack_create_inital_networks: Create public and private initial network True|False (False by default)
-    openstack_external_net_name: external network name ("public" by default)
-    openstack_external_subnet_name: external subnetwork name ("public" by default)
-    openstack_external_subnet_gateway: external subnetwork gateway ("192.168.1.254" by default)
-    openstack_external_subnet_cird: external subnetwork gateway ("192.168.1.0/24" by default)
-    openstack_external_subnet_pool_start: ip to start the external subnet pool("192.168.1.1" by default)
-    openstack_external_subnet_pool_end: ip to end the external subnet pool("192.168.1.128" by default)
-    
-    
-    openstack_demo_net_name: private network name ("demo_net" by default)
-    openstack_demo_subnet_name: private subnetwork name ("demo_net" by default)
-    openstack_demo_subnet_gateway: private subnet gateway ("192.168.200.254" by default)
-    openstack_demo_subnet_cidr: private subnet cidr ("192.168.200.0/24" by default)
-    openstack_demo_dns_servers: private dns servers ("'8.8.8.8 8.8.8.4'" by default)
-    
-    openstack_demo_router: demo router name ("router1" by default)
+   
+  
     
 
 
@@ -273,7 +257,8 @@ FAQ
 * Services does not start after rebooting the virtual machine (VM)
  * If you have install the controller in a VM provided by openstack, you have to set the hostname every time that the VM restars.
  * Rabbit depends of the hostname. If the hostname changes, rabbit needs to be reinstalled.
-
+* Create initial networks fail.
+ * Fails in case all the services are not still up. Wait some time and execute again.
 
 Author Information
 ------------------
