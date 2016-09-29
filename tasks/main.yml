@@ -36,8 +36,3 @@
 # firewall
 - include: firewall.yml
 
-# initital networks. It is not working if the services are still not up.
-- include: openstack/create_networks.yml
-  when: "{{ openstack_create_inital_networks }}"
-
-
