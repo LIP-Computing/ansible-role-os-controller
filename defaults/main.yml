@@ -7,6 +7,7 @@ openstack_hard_nofile_limits: 102400
 openstack_controller_ip: 127.0.0.1
 openstack_cidr: 127.0.0.0/8
 openstack_memcached_servers: localhost:11211
+openstack_controller_public_ip: 127.0.0.1
 
 #
 openstack_admin_vip: "{{ openstack_controller_host }}"
