@@ -294,9 +294,6 @@ rpc_backend = rabbit
 # From keystone
 #
 
-# OpenID for IAM
-#oidc =
-
 # Allowed authentication methods. (list value)
 #methods = external,password,token,oauth1
 
@@ -362,7 +359,7 @@ rpc_backend = rabbit
 
 # Memcache servers in the format of "host:port". (dogpile.cache.memcache and
 # keystone.cache.memcache_pool backends only). (list value)
-#memcache_servers = localhost:11211
+memcache_servers = localhost:11211
 
 # Number of seconds memcached server is considered dead before it is tried
 # again. (dogpile.cache.memcache and keystone.cache.memcache_pool backends

@@ -42,6 +42,11 @@
   with_items:
     - httpd
 
+- name: Start memcached daemon.
+  service: "name={{ item }} enabled=yes state=restarted"
+  with_items:
+    - memcached
+
 #rabbit
 - name: Service rabbitmq
   service: name=rabbitmq-server enabled=yes state=restarted
