@@ -135,3 +135,9 @@
   vars:
     project: service
     description: "Service project"
+
+#token fernet
+- name:  Create keystone tables in DB
+  shell: keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
+  become_user: keystone
+  when: "{{ openstack_keystone_config_token_provider }}" == "fernet"
