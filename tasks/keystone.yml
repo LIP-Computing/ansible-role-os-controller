@@ -42,6 +42,11 @@
   with_items:
     - httpd
 
+- name: Start memcached daemon.
+  service: "name={{ item }} enabled=yes state=restarted"
+  with_items:
+    - memcached
+
 #rabbit
 - name: Service rabbitmq
   service: name=rabbitmq-server enabled=yes state=restarted
@@ -130,3 +135,9 @@
   vars:
     project: service
     description: "Service project"
+
+#token fernet
+- name:  Create keystone tables in DB
+  shell: keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
+  become_user: keystone
+  when: "{{ openstack_keystone_config_token_provider }}" == "fernet"

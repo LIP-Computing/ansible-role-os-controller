@@ -19,6 +19,7 @@
     - wget
     - httpd
     - memcached
+    - python-memcached
     - mod_wsgi
     - rabbitmq-server
     - iptables
