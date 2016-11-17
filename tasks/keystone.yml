@@ -138,6 +138,8 @@
 
 #token fernet
 - name:  Create keystone tables in DB
+  vars:
+    token_provider: "{{ openstack_keystone_config_token_provider }}"
   shell: keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
   become_user: keystone
-  when: "{{ openstack_keystone_config_token_provider }}" == "fernet"
+  when: token_provider == "fernet"
