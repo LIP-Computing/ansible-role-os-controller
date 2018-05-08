@@ -1,8 +1,21 @@
 ---
 # defaults file for ansible-role-openstack-controller
 
+###############################################
+# Openstack services in the controller
+service_keystone: true
+service_dashboard: true
+service_glance: true
+service_cinder: false
+service_nova: false
+service_neutron: false
+service_heat: false
+
+###############################################
+# operating system file limits
 openstack_soft_nofile_limits: 102400
 openstack_hard_nofile_limits: 102400
+
 
 openstack_controller_ip: 127.0.0.1
 openstack_cidr: 127.0.0.0/8
