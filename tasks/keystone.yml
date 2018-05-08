@@ -22,7 +22,7 @@
   service: name=apache2 enabled=yes state=restarted
 
 - name: Waiting for keystone service is started.
-  wait_for: "host={{ openstack_controller_host }} port=35357 timeout=10"
+  wait_for: "host={{ openstack_controller_host }} port=5000 timeout=10"
   run_once: true
 
 - name: Create keystone tables in DB
