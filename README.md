@@ -2,7 +2,7 @@ Role os-controller
 ==================
 
 This ansible role provides the installation and configuration of the main openstack services controllers and
-the required software dependencies and firewall. 
+the required software dependencies. 
 
 Services provided are the following:
 
@@ -14,21 +14,15 @@ Services provided are the following:
 * cinder
 * heat
 
-In addition a network node is installed in the same host. The network configuration is based in openvswitch.
-
-It has been tested with Openstack Liberty on Centos 7.
+Openstack Queens on Ubuntu 18.04.
 
 ### Related roles
 * In case you want to install a compute node in the same host, you can use the role LIP-Computing.nova-compute-node.
 * In case you want to link the floating ips to external network, you can use the role LIP-Computing.os-all-in-network.
 
-
 Requirements
 ------------
-
-* Disable SELinux (reboot is required).
-* Ensure the system has configured swap memory
-* Disable "– update_hostname" option form /etc/cloud/cloud.cfg. It prevents to change the hostname when restarting the VM.
+See ```requirements.yml``` for the list of roles it depends on.
 
 
 Role Variables
@@ -169,16 +163,6 @@ The variables are related to the Openstack version, endpoints, IPs, passwords:
     # Networks:
     
     openstack_neutron_bridge_interface: external bridge of openvswitch ("br-ex" by default)
-   
-  
-    
-
-
-
-Dependencies
-------------
-The role uses a mysql server, we recommend to use:
- * geerlingguy.mysql
 
 
 Playbook Examples
@@ -263,4 +247,4 @@ FAQ
 Author Information
 ------------------
 
-Contact: jorgesece@lip.pt
+Contact: Mario David <mariojmdavid@gmail.com, original from Jorge Cedillo <jorgesece@lip.pt>

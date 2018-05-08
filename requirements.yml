@@ -1,2 +1,6 @@
-- src: geerlingguy.mysql
-  version: v2.3.1
+---
+- src: https://github.com/marklee77/ansible-role-chrony
+- src: https://github.com/geerlingguy/ansible-role-memcached
+- src: https://github.com/jasonroyle/ansible-role-rabbitmq
+- src: https://github.com/geerlingguy/ansible-role-apache
+- src: https://github.com/geerlingguy/ansible-role-mysql
