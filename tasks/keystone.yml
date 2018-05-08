@@ -1,93 +1,65 @@
 ---
-# tasks file for keystone
-
-# Prerequisites
-- name: Prepare Database for keystone.
-  include: database.yml
-  vars:
-    db_name: "{{ openstack_keystone_db_name }}"
-    db_user: "{{ openstack_keystone_db_user }}"
-    db_password: "{{ openstack_keystone_db_password }}"
-    db_priv: "{{ openstack_keystone_db_name }}.*:ALL"
-  tags: database
-
-- name: Install OpenStack keystone package.
-  yum: name={{ item }} state=latest
+- name: Install packages keystone and mod-wsgi
+  apt: name={{ item }} state=latest update_cache=yes
   with_items:
-    - openstack-keystone
-  retries: 2
-  delay: 5
+    - keystone
+    - libapache2-mod-wsgi
+    - python-openstackclient
 
-#http
-
-- name: Configure httpd Listen Port.
-  lineinfile: >
-    dest=/etc/httpd/conf/httpd.conf
-    regexp="{{ item.regexp }}"
-    line="{{ item.line }}"
-    state=present
+- name: Install cjose and mod_auth_openidc
+  apt: deb={{ item }}
   with_items:
-    - { regexp: "^#?Listen", line: "Listen {{ openstack_http_port }}" }
-    - { regexp: "^#?ServerName", line: "ServerName {{ openstack_controller_host }}" }
+    - '{{ url_cjose }}'
+    - '{{ url_oidc }}'
 
 - name: Deploy keyston configuration files from templates
   template: src={{ item.src }} dest={{ item.dest }} mode=0640 owner=keystone group=apache backup=yes
   with_items:
-    - { src: 'keystone/keystone-dist-paste.ini.j2', dest: '/etc/keystone/keystone-dist-paste.ini' }
     - { src: 'keystone/keystone.conf.j2', dest: '/etc/keystone/keystone.conf' }
-    - { src: 'keystone/wsgi-keystone.conf.j2', dest: '/etc/httpd/conf.d/wsgi-keystone.conf' }
+    - { src: 'keystone/wsgi-keystone.conf.j2', dest: '/etc/apache2/sites-available/keystone.conf' }
 
-- name: Start http daemon.
-  service: "name={{ item }} enabled=yes state=restarted"
-  with_items:
-    - httpd
-
-- name: Start memcached daemon.
-  service: "name={{ item }} enabled=yes state=restarted"
-  with_items:
-    - memcached
-
-#rabbit
-- name: Service rabbitmq
-  service: name=rabbitmq-server enabled=yes state=restarted
-
-- name: rabbitmq user setup
-  rabbitmq_user: user={{ openstack_rabbit_user }}
-                 password={{ openstack_rabbit_pass }}
-                 vhost=/
-                 configure_priv=.*
-                 read_priv=.*
-                 write_priv=.*
-                 state=present
+- name: Restart apache
+  service: name=apache2 enabled=yes state=restarted
 
 - name: Waiting for keystone service is started.
-  wait_for: "host={{ openstack_controller_host }} port=35357 delay=10 timeout=30"
+  wait_for: "host={{ openstack_controller_host }} port=35357 timeout=10"
   run_once: true
 
-- name: Give permissions to keystone.log
-  file: path=/var/log/keystone/keystone.log state=touch mode=0640 owner=keystone group=apache
-
-- name:  Create keystone tables in DB
-  shell: keystone-manage db_sync
+- name: Create keystone tables in DB
+  command: keystone-manage db_sync
+  become: true
   become_user: keystone
-  run_once: True
+  run_once: true
 
-- name: Create the service entity for keystone.
-  include: openstack/create_service.yml
-  vars:
-    name: keystone
-    type: identity
-    description: OpenStack Identity
+- name: Initialize fernet tokens
+  command: keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
+  run_once: true
 
-- name: Create the API endpoint for keystone.
-  include: openstack/create_endpoint.yml
-  vars:
-    service: identity
-    region: RegionOne
-    endpoints:
-      adminurl: "{{ openstack_endpoint_admin_url }}"
-      internalurl: "{{ openstack_endpoint_internal_url }}"
-      publicurl: "{{ openstack_endpoint_public_url }}"
+- name: Initialize fernet tokens
+  command: keystone-manage credential_setup --keystone-user keystone --keystone-group keystone
+  run_once: true
+  notify: restart apache
+
+- name: Bootstrap keystone admin and endpoint
+  command: |
+     keystone-manage bootstrap \
+     --bootstrap-password {{ openstack_admin_password }} \
+     --bootstrap-region-id {{ openstack_keystone_auth_region }} \
+     --bootstrap-admin-url {{ openstack_endpoint_admin_url }} \
+     --bootstrap-public-url {{ openstack_endpoint_public_url }} \
+     --bootstrap-internal-url {{ openstack_endpoint_internal_url }}
+  register: add_service
+  until: add_service|success
+  retries: 3
+  delay: 5
+
+
+
+
+
+
+
+
 
 # admin
 - name: "Create admin project"
@@ -135,11 +107,3 @@
   vars:
     project: service
     description: "Service project"
-
-#token fernet
-- name:  Create keystone tables in DB
-  vars:
-    token_provider: "{{ openstack_keystone_config_token_provider }}"
-  shell: keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
-  become_user: keystone
-  when: token_provider == "fernet"
