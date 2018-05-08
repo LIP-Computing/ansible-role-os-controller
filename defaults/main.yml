@@ -34,7 +34,7 @@ url_cjose: 'https://github.com/zmartzone/mod_auth_openidc/releases/download/v2.3
 openstack_controller_host: localhost
 openstack_controller_ip: 127.0.0.1
 openstack_cidr: 127.0.0.0/8
-openstack_memcached_servers: localhost:11211
+openstack_memcached_servers: 0.0.0.0:11211
 openstack_controller_public_ip: 127.0.0.1
 
 #
