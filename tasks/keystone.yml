@@ -53,36 +53,7 @@
   retries: 3
   delay: 5
 
-
-
-
-
-
-
-
-
-# admin
-- name: "Create admin project"
-  include: openstack/create_project.yml
-  vars:
-    project: admin
-    description: "Admin project"
-
-- name: "Create admin role"
-  include: openstack/create_role.yml
-  vars:
-    role: admin
-
-- name: "Create admin user in admin project"
-  include: openstack/create_user_in_project.yml
-  vars:
-    username: admin
-    password: "{{ openstack_admin_password }}"
-    project: admin
-    role: admin
-
-
-#service
+# Project service
 - name: "Create the service project"
   include: openstack/create_project.yml
   vars:

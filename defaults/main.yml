@@ -44,6 +44,7 @@ openstack_public_vip: "{{ openstack_controller_host }}"
 
 # Keystone public endpoint
 openstack_ks_url: "http://{{ openstack_controller_host }}:5000"
+openstack_keystone_db_password: "abc"
 
 openstack_os_identity_api_version: "3"
 openstack_ath_uri: "{{ openstack_ks_url }}"
@@ -63,26 +64,32 @@ openstack_admin_role: "admin"
 openstack_keystone_config_default_verbose: False
 openstack_keystone_auth_region: RegionOne
 
-
-
 # glance
+openstack_glance_keystone_password: "{{ openstack_admin_password }}"
+openstack_glance_db_password: "{{ openstack_keystone_db_password }}"
 openstack_glance_adminurl: "http://{{ openstack_admin_vip }}:9292"
 openstack_glance_internalurl: "http://{{ openstack_internal_vip }}:9292"
 openstack_glance_publicurl: "http://{{ openstack_public_vip }}:9292"
 
 # nova controller
+openstack_nova_keystone_password: "{{ openstack_admin_password }}"
+openstack_nova_db_password: "{{ openstack_keystone_db_password }}"
 openstack_nova_adminurl: "http://{{ openstack_admin_vip }}:8774/v2/%\\(tenant_id\\)s"
 openstack_nova_intelnalurl: "http://{{ openstack_internal_vip }}:8774/v2/%\\(tenant_id\\)s"
 openstack_nova_publicurl: "http://{{ openstack_public_vip }}:8774/v2/%\\(tenant_id\\)s"
 
 
 # neutron controller
+openstack_neutron_keystone_password: "{{ openstack_admin_password }}"
+openstack_neutron_db_password: "{{ openstack_admin_password }}"
 openstack_neutron_adminurl: "http://{{ openstack_admin_vip }}:9696"
 openstack_neutron_intelnalurl: "http://{{ openstack_internal_vip }}:9696"
 openstack_neutron_publicurl: "http://{{ openstack_public_vip }}:9696"
 openstack_neutron_metadata_secret: "{{ openstack_admin_password }}"
 
 # cinder
+openstack_cinder_user_password: "{{ openstack_admin_password }}"
+openstack_cinder_db_password: "{{ openstack_admin_password }}"
 openstack_cinder_adminurl_v1: "http://{{ openstack_admin_vip }}:8776/v1/%\\(tenant_id\\)s"
 openstack_cinder_internalurl_v1: "http://{{ openstack_internal_vip }}:8776/v1/%\\(tenant_id\\)s"
 openstack_cinder_publicurl_v1: "http://{{ openstack_public_vip }}:8776/v1/%\\(tenant_id\\)s"
@@ -91,6 +98,7 @@ openstack_cinder_intelnalurl_v2: "http://{{ openstack_internal_vip }}:8776/v2/%\
 openstack_cinder_publicurl_v2: "http://{{ openstack_public_vip }}:8776/v2/%\\(tenant_id\\)s"
 
 # heat
+openstack_heat_db_password: "{{ openstack_admin_password }}"
 openstack_heat_keystone_password: "{{ openstack_admin_password }}"
 openstack_heat_metadata: "http://{{ openstack_controller_host }}:8000"
 openstack_heat_waitcondition: "http://{{ openstack_controller_host }}:8000/v1/waitcondition"
