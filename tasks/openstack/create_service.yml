@@ -11,11 +11,11 @@
   register: serviceExist
   ignore_errors: True
   run_once: True
-  environment: "{{ token_auth_env }}"
+  environment: "{{ admin_auth_env }}"
 
 - name: 'Create service "{{ name }}"'
   shell: openstack service create --name {{ name }} --description "{{ description }}" {{ type }}
   when: serviceExist|failed
-  environment: "{{ token_auth_env }}"
+  environment: "{{ admin_auth_env }}"
   run_once: True
 

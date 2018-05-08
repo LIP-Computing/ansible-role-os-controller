@@ -9,10 +9,10 @@
   register: roleExist
   ignore_errors: True
   run_once: True
-  environment: "{{ token_auth_env }}"
+  environment: "{{ admin_auth_env }}"
 
 - name: 'Create the "{{ role }}" role'
   command: openstack role create "{{ role }}"
   when: roleExist|failed
   run_once: True
-  environment: "{{ token_auth_env }}"
+  environment: "{{ admin_auth_env }}"

@@ -10,15 +10,15 @@
   register: userExist
   ignore_errors: True
   run_once: True
-  environment: "{{ token_auth_env }}"
+  environment: "{{ admin_auth_env }}"
 
 - name: 'Create the "{{ username }}" user'
   command: openstack user create  --domain {{ domain }}  --password "{{ password }}"  "{{ username }}"
   when: userExist|failed
   run_once: True
-  environment: "{{ token_auth_env }}"
+  environment: "{{ admin_auth_env }}"
 
 - name: 'Add "{{ role }}" role to the "{{ username }}" user to the {{ domain }} domain'
   command: openstack role add --domain {{ domain }} --user "{{ username }}" "{{ role }}"
   run_once: True
-  environment: "{{ token_auth_env }}"
+  environment: "{{ admin_auth_env }}"

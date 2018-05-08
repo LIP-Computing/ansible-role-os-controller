@@ -2,4 +2,4 @@
 - name: 'Add "{{ role }}" role to the "{{ username }}" user to the {{ project }} project'
   command: openstack role add --project {{ project }}  --user "{{ username }}" "{{ role }}"
   run_once: True
-  environment: "{{ token_auth_env }}"
+  environment: "{{ admin_auth_env }}"
