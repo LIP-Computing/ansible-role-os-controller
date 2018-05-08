@@ -13,7 +13,7 @@
     - '{{ url_oidc }}'
 
 - name: Deploy keyston configuration files from templates
-  template: src={{ item.src }} dest={{ item.dest }} mode=0640 owner=keystone group=apache backup=yes
+  template: src={{ item.src }} dest={{ item.dest }} mode=0644
   with_items:
     - { src: 'keystone/keystone.conf.j2', dest: '/etc/keystone/keystone.conf' }
     - { src: 'keystone/wsgi-keystone.conf.j2', dest: '/etc/apache2/sites-available/keystone.conf' }
