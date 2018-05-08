@@ -1,7 +1,7 @@
 ---
 
 - name: "Get {{ openstack_user_project}} user id"
-  command: 'openstack project show "{{ openstack_user_project }}" -c id -f value'
+  command: 'openstack --insecure project show "{{ openstack_user_project }}" -c id -f value'
   register: openstack_demo_tenant_id
   environment: "{{ admin_auth_env }}"
 

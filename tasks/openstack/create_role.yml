@@ -5,14 +5,14 @@
 #   environment: "{{ token_auth_env }}"
 
 - name: 'Check "{{ role }}" role exists'
-  command: openstack role show "{{ role }}"
+  command: openstack --insecure role show "{{ role }}"
   register: roleExist
   ignore_errors: True
   run_once: True
   environment: "{{ admin_auth_env }}"
 
 - name: 'Create the "{{ role }}" role'
-  command: openstack role create "{{ role }}"
+  command: openstack --insecure role create "{{ role }}"
   when: roleExist|failed
   run_once: True
   environment: "{{ admin_auth_env }}"

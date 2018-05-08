@@ -6,14 +6,14 @@
 #   environment: "{{ token_auth_env }}"
 
 - name: 'Check "{{ domain }}" domain exists'
-  command: openstack domain show "{{ domain }}"
+  command: openstack --insecure domain show "{{ domain }}"
   register: roleExist
   ignore_errors: True
   run_once: True
   environment: "{{ admin_auth_env }}"
 
 - name: 'Create"{{ domain }}" domain'
-  command: openstack domain create --description "{{ description }}" "{{ domain }}"
+  command: openstack --insecure domain create --description "{{ description }}" "{{ domain }}"
   when: roleExist|failed
   run_once: True
   environment: "{{ admin_auth_env }}"

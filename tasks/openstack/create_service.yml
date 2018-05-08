@@ -7,14 +7,14 @@
 #     description:
 
 - name: 'Check "{{ name }}" role exists'
-  command: openstack service show "{{ name }}"
+  command: openstack --insecure service show "{{ name }}"
   register: serviceExist
   ignore_errors: True
   run_once: True
   environment: "{{ admin_auth_env }}"
 
 - name: 'Create service "{{ name }}"'
-  shell: openstack service create --name {{ name }} --description "{{ description }}" {{ type }}
+  shell: openstack --insecure service create --name {{ name }} --description "{{ description }}" {{ type }}
   when: serviceExist|failed
   environment: "{{ admin_auth_env }}"
   run_once: True
