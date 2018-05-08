@@ -34,7 +34,6 @@ openstack_endpoint_admin_url: "http://{{ openstack_admin_vip }}:35357/v3"
 openstack_endpoint_internal_url: "http://{{ openstack_internal_vip }}:5000/v3"
 openstack_endpoint_public_url: "http://{{ openstack_public_vip }}:5000/v3"
 openstack_database_host: "{{ openstack_controller_host }}"
-openstack_http_port: 80
 
 # auth
 openstack_admin_token: "admin_token"
@@ -42,11 +41,6 @@ openstack_admin_user: "admin"
 openstack_admin_project: "admin"
 openstack_admin_password: "admin_password"
 openstack_admin_role: "admin"
-
-# rabbitmq variables
-openstack_rabbit_host: "{{ openstack_controller_host }}"
-openstack_rabbit_user: openstack
-openstack_rabbit_pass: "{{ openstack_admin_password }}"
 
 # keystone
 openstack_keystone_db_name: "keystone"

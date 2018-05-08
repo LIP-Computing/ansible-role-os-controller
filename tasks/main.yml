@@ -1,38 +1,27 @@
 ---
-# tasks file for ansible-role-openstack-controller
-
 - name: Configure open file limit for OpenStack services.
   template: src=nofile-limits.conf.j2 dest=/etc/security/limits.d/30-nofile.conf
   tags: limits
 
-# Prepare deployment
-- include: host-config.yml
-
-- include: pre-deploy.yml
-#
-- include: chrony.yml
-#
+######## Configured by default
 # keystone
 - include: keystone.yml
 
+# horizon
+- include: horizon.yml
+
 # glance
 - include: glance.yml
-#
-## nova
+
+######## Not configured by default
+# cinder
+- include: cinder.yml
+
+# nova
 - include: nova.yml
 
 # neutron
 - include: neutron.yml
 
-# horizon
-- include: horizon.yml
-
-# cinder
-- include: cinder.yml
-
 # heat
 - include: heat.yml
-
-# firewall
-- include: firewall.yml
-
