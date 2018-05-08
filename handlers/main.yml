@@ -1,10 +1,7 @@
 ---
 # handlers file for ansible-role-openstack-controller
-- name: restart mysql
-  service: name=mariadb state=restarted
-
-- name: restart httpd
-  service: name=httpd state=restarted
+- name: restart keystone
+  service: name=apache2 state=restarted
 
 - name: restart glance-api
   service: name=openstack-glance-api state=restarted
@@ -16,14 +13,29 @@
   service: name={{ item }} state=restarted
   with_items:
     - openstack-nova-api
+    - openstack-nova-cert
+    - openstack-nova-conductor
+    - openstack-nova-consoleauth
+    - openstack-nova-novncproxy
+    - openstack-nova-scheduler
 
 - name: restart horizon
   service: name={{ item }} state=restarted
   with_items:
-    - httpd
+    - apache2
 
 - name: restart cinder
   service: name={{ item }} state=restarted
   with_items:
     - openstack-cinder-api
     - openstack-cinder-scheduler
+
+- name: restart neutron-server
+  service: name=neutron-server state=restarted
+
+- name: restart heat
+  service: name={{ item }} state=restarted
+  with_items:
+    - openstack-heat-engine
+    - openstack-heat-api-cfn
+    - openstack-heat-api
