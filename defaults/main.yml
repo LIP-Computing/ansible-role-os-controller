@@ -4,7 +4,7 @@
 ###############################################
 # Openstack services in the controller
 service_keystone: true
-service_dashboard: true
+service_horizon: true
 service_glance: true
 service_cinder: false
 service_nova: false
