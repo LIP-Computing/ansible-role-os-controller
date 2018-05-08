@@ -7,35 +7,35 @@
 # keystone
 - name: Service keystone
   include_tasks: "keystone.yml"
-  when: {{ service_keystone }}
+  when: "{{ service_keystone }}"
 
 # horizon
 - name: Service horizon
   include_tasks: "horizon.yml"
-  when: {{ service_horizon }}
+  when: "{{ service_horizon }}"
 
 # glance
 - name: Service glance
   include_tasks: "glance.yml"
-  when: {{ service_glance }}
+  when: "{{ service_glance }}"
 
 ######## Not configured by default
 # cinder
 - name: Service cinder
   include_tasks: "cinder.yml"
-  when: {{ service_cinder }}
+  when: "{{ service_cinder }}"
 
 # nova
 - name: Service nova
   include_tasks: "nova.yml"
-  when: {{ service_nova }}
+  when: "{{ service_nova }}"
 
 # neutron
 - name: Service neutron
   include_tasks: "neutron.yml"
-  when: {{ service_neutron }}
+  when: "{{ service_neutron }}"
 
 # heat
 - name: Service heat
   include_tasks: "heat.yml"
-  when: {{ service_heat }}
+  when: "{{ service_heat }}"
