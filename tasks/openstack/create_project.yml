@@ -6,13 +6,13 @@
 
 - name: 'Check "{{ project }}" project exists'
   command: openstack --insecure project show "{{ project }}"
-  register: roleExist
+  register: projectExist
   ignore_errors: True
   run_once: True
   environment: "{{ admin_auth_env }}"
 
 - name: 'Create the "{{ project }}" project'
   command: openstack --insecure project create --domain default --description "{{ description }}" "{{ project }}"
-  when: roleExist|failed
+  when: projectExist|failed
   run_once: True
   environment: "{{ admin_auth_env }}"
