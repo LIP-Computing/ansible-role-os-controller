@@ -9,7 +9,6 @@
 - name: Install cjose and mod_auth_openidc
   apt: deb={{ item }}
   with_items:
-    - '{{ url_cjose }}'
     - '{{ url_oidc }}'
 
 - name: Deploy keyston configuration files from templates
