@@ -2,7 +2,7 @@
 # tasks file for horizon
 
 - name: Install OpenStack horizon packages.
-  apt: name={{ item }} state=latest
+  package: name={{ item }} state=latest
   with_items:
     - openstack-dashboard
 
