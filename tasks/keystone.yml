@@ -44,7 +44,7 @@
   template: src={{ item.src }} dest={{ item.dest }} mode=0644
   with_items:
     - { src: 'keystone/keystone.conf.j2', dest: '/etc/keystone/keystone.conf' }
-    - { src: 'keystone/wsgi-keystone.conf.j2', dest: '/etc/httpd/conf.d/wsgi-keystone.conf' }
+    - { src: 'keystone/wsgi-keystone.conf-c7.j2', dest: '/etc/httpd/conf.d/wsgi-keystone.conf' }
   when: ansible_os_family == 'RedHat'
 
 - name: Restart apache
