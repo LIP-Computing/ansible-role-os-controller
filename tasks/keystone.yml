@@ -1,25 +1,57 @@
 ---
+# For Ubuntu
 - name: Install packages keystone and mod-wsgi
   apt: name={{ item }} state=latest update_cache=yes
   with_items:
     - keystone
     - libapache2-mod-wsgi
     - python-openstackclient
+  when: ansible_os_family == 'Debian'
 
 - name: Install cjose and mod_auth_openidc
   apt: deb={{ item }}
   with_items:
     - '{{ url_oidc }}'
+  when: ansible_os_family == 'Debian'
 
 - name: Deploy keyston configuration files from templates
   template: src={{ item.src }} dest={{ item.dest }} mode=0644
   with_items:
     - { src: 'keystone/keystone.conf.j2', dest: '/etc/keystone/keystone.conf' }
     - { src: 'keystone/wsgi-keystone.conf.j2', dest: '/etc/apache2/sites-available/keystone.conf' }
+  when: ansible_os_family == 'Debian'
 
 - name: Restart apache
   service: name=apache2 enabled=yes state=restarted
+  when: ansible_os_family == 'Debian'
 
+# For Centos
+- name: Install openstack queens repository
+  yum: name=centos-release-openstack-queens state=latest update_cache=yes
+  when: ansible_os_family == 'RedHat'
+
+- name: Install packages keystone and mod-wsgi oidc
+  yum: name={{ item }} state=latest update_cache=yes
+  with_items:
+    - openstack-keystone
+    - mod_wsgi
+    - python-openstackclient
+    - '{{ url_oidc }}'
+    - '{{ url_cjose }}'
+  when: ansible_os_family == 'RedHat'
+
+- name: Deploy keyston configuration files from templates
+  template: src={{ item.src }} dest={{ item.dest }} mode=0644
+  with_items:
+    - { src: 'keystone/keystone.conf.j2', dest: '/etc/keystone/keystone.conf' }
+    - { src: 'keystone/wsgi-keystone.conf.j2', dest: '/etc/httpd/conf.d/wsgi-keystone.conf' }
+  when: ansible_os_family == 'RedHat'
+
+- name: Restart apache
+  service: name=httpd enabled=yes state=restarted
+  when: ansible_os_family == 'RedHat'
+
+#########
 - name: Waiting for keystone service is started.
   wait_for: "host={{ openstack_controller_host }} port=5000 timeout=10"
   run_once: true
