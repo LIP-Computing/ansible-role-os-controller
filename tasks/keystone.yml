@@ -38,12 +38,12 @@
     - python-openstackclient
   when: ansible_os_family == 'RedHat'
 
-- name: Install packages oidc
-  yum: name={{ item }} state=present
-  with_items:
-    - '{{ url_oidc }}'
-    - '{{ url_cjose }}'
-  when: ansible_os_family == 'RedHat'
+#- name: Install packages oidc
+#  yum: name={{ item }} state=present
+#  with_items:
+#    - '{{ url_oidc }}'
+#    - '{{ url_cjose }}'
+#  when: ansible_os_family == 'RedHat'
 
 - name: Deploy keyston configuration files from templates
   template: src={{ item.src }} dest={{ item.dest }} mode=0644
