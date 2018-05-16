@@ -2,6 +2,11 @@
 # handlers file for ansible-role-openstack-controller
 - name: restart keystone
   service: name=apache2 state=restarted
+  when: ansible_os_family == 'Debian'
+
+- name: restart keystone
+  service: name=httpd state=restarted
+  when: ansible_os_family == 'RedHat'
 
 - name: restart glance-api
   service: name=openstack-glance-api state=restarted
@@ -20,9 +25,12 @@
     - openstack-nova-scheduler
 
 - name: restart horizon
-  service: name={{ item }} state=restarted
-  with_items:
-    - apache2
+  service: name=apache2 state=restarted
+  when: ansible_os_family == 'Debian'
+
+- name: restart horizon
+  service: name=httpd state=restarted
+  when: ansible_os_family == 'RedHat'
 
 - name: restart cinder
   service: name={{ item }} state=restarted
