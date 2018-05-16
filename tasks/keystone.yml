@@ -30,12 +30,17 @@
   yum: name=centos-release-openstack-queens state=latest update_cache=yes
   when: ansible_os_family == 'RedHat'
 
-- name: Install packages keystone and mod-wsgi oidc
+- name: Install packages keystone and mod-wsgi
   yum: name={{ item }} state=latest update_cache=yes
   with_items:
     - openstack-keystone
     - mod_wsgi
     - python-openstackclient
+  when: ansible_os_family == 'RedHat'
+
+- name: Install packages oidc
+  yum: name={{ item }} state=present
+  with_items:
     - '{{ url_oidc }}'
     - '{{ url_cjose }}'
   when: ansible_os_family == 'RedHat'
