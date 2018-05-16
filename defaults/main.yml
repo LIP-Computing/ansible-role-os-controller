@@ -19,16 +19,20 @@ openstack_hard_nofile_limits: 102400
 ###############################################
 # apache module openid connect
 # mod_auth_oidc download URLs
-ver_ubuntu: 'bionic'
-
+base_oidc_url: 'https://github.com/zmartzone/mod_auth_openidc/releases/download'
 ver_oidc: '2.3.4'
-pack_oidc: 'libapache2-mod-auth-openidc_{{ ver_oidc }}-1.{{ ver_ubuntu }}.1_amd64.deb'
-url_oidc: 'https://github.com/zmartzone/mod_auth_openidc/releases/download/v{{ ver_oidc }}/{{ pack_oidc }}'
-
 ver_cjose: '0.5.1'
-pack_cjose: 'libcjose0_{{ ver_cjose }}-1.{{ ver_ubuntu }}.1_amd64.deb'
-url_cjose: 'https://github.com/zmartzone/mod_auth_openidc/releases/download/v2.3.0/{{ pack_cjose }}'
 
+# Ubuntu 18.04 packages
+#pack_oidc: 'libapache2-mod-auth-openidc_{{ ver_oidc }}-1.bionic.1_amd64.deb'
+#pack_cjose: 'libcjose0_{{ ver_cjose }}-1.bionic.1_amd64.deb'
+
+# Centos7 packages
+pack_oidc: 'mod_auth_openidc-{{ ver_oidc }}-1.el7.centos.x86_64.rpm'
+pack_cjose: 'cjose-{{ ver_cjose }}-1.el7.centos.x86_64.rpm'
+
+url_oidc: '{{ base_oidc_url }}/v{{ ver_oidc }}/{{ pack_oidc }}'
+url_cjose: '{{ base_oidc_url }}/v2.3.0/{{ pack_cjose }}'
 
 ###############################################
 openstack_controller_host: localhost
