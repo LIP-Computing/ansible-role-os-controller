@@ -20,7 +20,7 @@ openstack_hard_nofile_limits: 102400
 # apache module openid connect
 # mod_auth_oidc download URLs
 base_oidc_url: 'https://github.com/zmartzone/mod_auth_openidc/releases/download'
-ver_oidc: '2.3.4'
+ver_oidc: '2.3.9'
 ver_cjose: '0.5.1'
 
 # Ubuntu 18.04 packages
