@@ -26,7 +26,7 @@
   when: ansible_os_family == 'Debian'
 
 # For Centos
-- name: Install openstack queens repository
+- name: Install openstack repository
   yum: name=centos-release-openstack-rocky state=latest update_cache=yes
   when: ansible_os_family == 'RedHat'
 
