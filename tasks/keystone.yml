@@ -88,6 +88,7 @@
   until: add_service|success
   retries: 3
   delay: 5
+  run_once: true
 
 # Project service
 - name: "Create the service project"
@@ -95,3 +96,4 @@
   vars:
     project: service
     description: "Service project"
+  run_once: true
