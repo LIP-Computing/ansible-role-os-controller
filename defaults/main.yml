@@ -22,13 +22,12 @@ openstack_hard_nofile_limits: 102400
 base_oidc_url: 'https://github.com/zmartzone/mod_auth_openidc/releases/download'
 ver_oidc: '2.3.9'
 ver_cjose: '0.5.1'
-
 # Ubuntu 18.04 packages
 #pack_oidc: 'libapache2-mod-auth-openidc_{{ ver_oidc }}-1.bionic.1_amd64.deb'
 #pack_cjose: 'libcjose0_{{ ver_cjose }}-1.bionic.1_amd64.deb'
 
 # Centos7 packages
-pack_oidc: 'mod_auth_openidc-{{ ver_oidc }}-1.el7.centos.x86_64.rpm'
+pack_oidc: 'mod_auth_openidc-{{ ver_oidc }}-1.el7.x86_64.rpm'
 pack_cjose: 'cjose-{{ ver_cjose }}-1.el7.centos.x86_64.rpm'
 
 url_oidc: '{{ base_oidc_url }}/v{{ ver_oidc }}/{{ pack_oidc }}'
