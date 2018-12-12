@@ -34,11 +34,15 @@ url_oidc: '{{ base_oidc_url }}/v{{ ver_oidc }}/{{ pack_oidc }}'
 url_cjose: '{{ base_oidc_url }}/v2.3.0/{{ pack_cjose }}'
 
 ###############################################
-openstack_controller_host: localhost
-openstack_controller_ip: 127.0.0.1
-openstack_cidr: 127.0.0.0/8
-openstack_memcached_servers: 0.0.0.0:11211
-openstack_controller_public_ip: 127.0.0.1
+openstack_controller_host: "localhost"
+openstack_controller_ip: "127.0.0.1"
+openstack_cidr: "127.0.0.0/8"
+openstack_memcached_servers: "0.0.0.0:11211"
+openstack_controller_public_ip: "127.0.0.1"
+
+# In case there are several openstack controllers
+# define one to initialize DB and other services
+openstack_init_host: "{{ openstack_controller_host }}"
 
 #
 openstack_admin_vip: "{{ openstack_controller_host }}"
