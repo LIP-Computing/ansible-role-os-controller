@@ -1,5 +1,4 @@
 [DEFAULT]
-log_dir = /var/log/keystone
 
 #
 # From keystone
@@ -24,14 +23,18 @@ log_dir = /var/log/keystone
 # a different host. (uri value)
 #public_endpoint = <None>
 
-# The base admin endpoint URL for Keystone that is advertised to clients (NOTE:
-# this does NOT affect how Keystone listens for connections). Defaults to the
-# base host URL of the request. For example, if keystone receives a request to
-# `http://server:35357/v3/users`, then this will option will be automatically
-# treated as `http://server:35357`. You should only need to set option if
-# either the value of the base URL contains a path that keystone does not
-# automatically infer (`/prefix/v3`), or if the endpoint should be found on a
-# different host. (uri value)
+# DEPRECATED: The base admin endpoint URL for Keystone that is advertised to
+# clients (NOTE: this does NOT affect how Keystone listens for connections).
+# Defaults to the base host URL of the request. For example, if keystone
+# receives a request to `http://server:35357/v3/users`, then this will option
+# will be automatically treated as `http://server:35357`. You should only need
+# to set option if either the value of the base URL contains a path that
+# keystone does not automatically infer (`/prefix/v3`), or if the endpoint
+# should be found on a different host. (uri value)
+# This option is deprecated for removal since R.
+# Its value may be silently ignored in the future.
+# Reason: With the removal of the 2.0 API keystone does not distinguish between
+# admin and public endpoints.
 #admin_endpoint = <None>
 
 # Maximum depth of the project hierarchy, excluding the project acting as a
@@ -611,8 +614,8 @@ log_dir = /var/log/keystone
 #memcache_dead_retry = 300
 
 # Timeout in seconds for every call to a server. (dogpile.cache.memcache and
-# oslo_cache.memcache_pool backends only). (integer value)
-#memcache_socket_timeout = 3
+# oslo_cache.memcache_pool backends only). (floating point value)
+#memcache_socket_timeout = 3.0
 
 # Max total number of open connections to every memcached server.
 # (oslo_cache.memcache_pool backend only). (integer value)
@@ -762,9 +765,14 @@ connection = "mysql+pymysql://keystone:{{ openstack_keystone_db_password }}@{{ o
 # Deprecated group/name - [sql]/idle_timeout
 #connection_recycle_time = 3600
 
-# Minimum number of SQL connections to keep open in a pool. (integer value)
+# DEPRECATED: Minimum number of SQL connections to keep open in a pool.
+# (integer value)
 # Deprecated group/name - [DEFAULT]/sql_min_pool_size
 # Deprecated group/name - [DATABASE]/sql_min_pool_size
+# This option is deprecated for removal.
+# Its value may be silently ignored in the future.
+# Reason: The option to set the minimum pool size is not supported by
+# sqlalchemy.
 #min_pool_size = 1
 
 # Maximum number of SQL connections to keep open in a pool. Setting a value of
@@ -822,6 +830,10 @@ connection = "mysql+pymysql://keystone:{{ openstack_keystone_db_password }}@{{ o
 # Maximum retries in case of connection error or deadlock error before error is
 # raised. Set to -1 to specify an infinite retry count. (integer value)
 #db_max_retries = 20
+
+# Optional URL parameters to append onto the connection URL at connect time;
+# specify as param1=value1&param2=value2&... (string value)
+#connection_parameters =
 
 
 [domain_config]
@@ -885,7 +897,7 @@ connection = "mysql+pymysql://keystone:{{ openstack_keystone_db_password }}@{{ o
 #
 
 # DEPRECATED: The IP address of the network interface for the public service to
-# listen on. (unknown value)
+# listen on. (host address value)
 # Deprecated group/name - [DEFAULT]/bind_host
 # Deprecated group/name - [DEFAULT]/public_bind_host
 # This option is deprecated for removal since K.
@@ -907,7 +919,7 @@ connection = "mysql+pymysql://keystone:{{ openstack_keystone_db_password }}@{{ o
 #public_port = 5000
 
 # DEPRECATED: The IP address of the network interface for the admin service to
-# listen on. (unknown value)
+# listen on. (host address value)
 # Deprecated group/name - [DEFAULT]/bind_host
 # Deprecated group/name - [DEFAULT]/admin_bind_host
 # This option is deprecated for removal since K.
@@ -927,16 +939,6 @@ connection = "mysql+pymysql://keystone:{{ openstack_keystone_db_password }}@{{ o
 # Newton release. These options remain for backwards compatibility because they
 # are used for URL substitutions.
 #admin_port = 35357
-
-
-[extra_headers]
-
-#
-# From keystone
-#
-
-# Specifies the distribution of the keystone server. (string value)
-#Distribution = Ubuntu
 
 
 [federation]
@@ -1847,6 +1849,26 @@ connection = "mysql+pymysql://keystone:{{ openstack_keystone_db_password }}@{{ o
 # Size of batch for the producer async send (integer value)
 #producer_batch_size = 16384
 
+# Enable asynchronous consumer commits (boolean value)
+#enable_auto_commit = false
+
+# The maximum number of records returned in a poll call (integer value)
+#max_poll_records = 500
+
+# Protocol used to communicate with brokers (string value)
+# Possible values:
+# PLAINTEXT - <No description provided>
+# SASL_PLAINTEXT - <No description provided>
+# SSL - <No description provided>
+# SASL_SSL - <No description provided>
+#security_protocol = PLAINTEXT
+
+# Mechanism when security protocol is SASL (string value)
+#sasl_mechanism = PLAIN
+
+# CA certificate PEM file used to verify the server certificate (string value)
+#ssl_cafile =
+
 
 [oslo_messaging_notifications]
 
@@ -1889,8 +1911,9 @@ connection = "mysql+pymysql://keystone:{{ openstack_keystone_db_password }}@{{ o
 # Auto-delete queues in AMQP. (boolean value)
 #amqp_auto_delete = false
 
-# Enable SSL (boolean value)
-#ssl = <None>
+# Connect over SSL. (boolean value)
+# Deprecated group/name - [oslo_messaging_rabbit]/rabbit_use_ssl
+#ssl = false
 
 # SSL version to use (valid only if SSL enabled). Valid values are TLSv1 and
 # SSLv23. SSLv2, SSLv3, TLSv1_1, and TLSv1_2 may be available on some
@@ -2021,118 +2044,6 @@ connection = "mysql+pymysql://keystone:{{ openstack_keystone_db_password }}@{{ o
 # How often times during the heartbeat_timeout_threshold we check the
 # heartbeat. (integer value)
 #heartbeat_rate = 2
-
-# Deprecated, use rpc_backend=kombu+memory or rpc_backend=fake (boolean value)
-#fake_rabbit = false
-
-# Maximum number of channels to allow (integer value)
-#channel_max = <None>
-
-# The maximum byte size for an AMQP frame (integer value)
-#frame_max = <None>
-
-# How often to send heartbeats for consumer's connections (integer value)
-#heartbeat_interval = 3
-
-# Arguments passed to ssl.wrap_socket (dict value)
-#ssl_options = <None>
-
-# Set socket timeout in seconds for connection's socket (floating point value)
-#socket_timeout = 0.25
-
-# Set TCP_USER_TIMEOUT in seconds for connection's socket (floating point
-# value)
-#tcp_user_timeout = 0.25
-
-# Set delay for reconnection to some host which has connection error (floating
-# point value)
-#host_connection_reconnect_delay = 0.25
-
-# Connection factory implementation (string value)
-# Possible values:
-# new - <No description provided>
-# single - <No description provided>
-# read_write - <No description provided>
-#connection_factory = single
-
-# Maximum number of connections to keep queued. (integer value)
-#pool_max_size = 30
-
-# Maximum number of connections to create above `pool_max_size`. (integer
-# value)
-#pool_max_overflow = 0
-
-# Default number of seconds to wait for a connections to available (integer
-# value)
-#pool_timeout = 30
-
-# Lifetime of a connection (since creation) in seconds or None for no
-# recycling. Expired connections are closed on acquire. (integer value)
-#pool_recycle = 600
-
-# Threshold at which inactive (since release) connections are considered stale
-# in seconds or None for no staleness. Stale connections are closed on acquire.
-# (integer value)
-#pool_stale = 60
-
-# Default serialization mechanism for serializing/deserializing
-# outgoing/incoming messages (string value)
-# Possible values:
-# json - <No description provided>
-# msgpack - <No description provided>
-#default_serializer_type = json
-
-# Persist notification messages. (boolean value)
-#notification_persistence = false
-
-# Exchange name for sending notifications (string value)
-#default_notification_exchange = ${control_exchange}_notification
-
-# Max number of not acknowledged message which RabbitMQ can send to
-# notification listener. (integer value)
-#notification_listener_prefetch_count = 100
-
-# Reconnecting retry count in case of connectivity problem during sending
-# notification, -1 means infinite retry. (integer value)
-#default_notification_retry_attempts = -1
-
-# Reconnecting retry delay in case of connectivity problem during sending
-# notification message (floating point value)
-#notification_retry_delay = 0.25
-
-# Time to live for rpc queues without consumers in seconds. (integer value)
-#rpc_queue_expiration = 60
-
-# Exchange name for sending RPC messages (string value)
-#default_rpc_exchange = ${control_exchange}_rpc
-
-# Exchange name for receiving RPC replies (string value)
-#rpc_reply_exchange = ${control_exchange}_rpc_reply
-
-# Max number of not acknowledged message which RabbitMQ can send to rpc
-# listener. (integer value)
-#rpc_listener_prefetch_count = 100
-
-# Max number of not acknowledged message which RabbitMQ can send to rpc reply
-# listener. (integer value)
-#rpc_reply_listener_prefetch_count = 100
-
-# Reconnecting retry count in case of connectivity problem during sending
-# reply. -1 means infinite retry during rpc_timeout (integer value)
-#rpc_reply_retry_attempts = -1
-
-# Reconnecting retry delay in case of connectivity problem during sending
-# reply. (floating point value)
-#rpc_reply_retry_delay = 0.25
-
-# Reconnecting retry count in case of connectivity problem during sending RPC
-# message, -1 means infinite retry. If actual retry attempts in not 0 the rpc
-# request could be processed more than one time (integer value)
-#default_rpc_retry_attempts = -1
-
-# Reconnecting retry delay in case of connectivity problem during sending RPC
-# message (floating point value)
-#rpc_retry_delay = 0.25
 
 
 [oslo_messaging_zmq]
@@ -2356,19 +2267,6 @@ connection = "mysql+pymysql://keystone:{{ openstack_keystone_db_password }}@{{ o
 #remote_ssl_client_key_file = <None>
 
 
-[paste_deploy]
-
-#
-# From keystone
-#
-
-# Name of (or absolute path to) the Paste Deploy configuration file that
-# composes middleware and the keystone application itself into actual WSGI
-# entry points. See http://pythonpaste.org/deploy/ for additional documentation
-# on the file's format. (string value)
-#config_file = keystone-paste.ini
-
-
 [policy]
 
 #
@@ -2393,32 +2291,32 @@ connection = "mysql+pymysql://keystone:{{ openstack_keystone_db_password }}@{{ o
 #
 
 #
-# Enables the profiling for all services on this node. Default value is False
-# (fully disable the profiling feature).
+# Enable the profiling for all services on this node.
+#
+# Default value is False (fully disable the profiling feature).
 #
 # Possible values:
 #
 # * True: Enables the feature
 # * False: Disables the feature. The profiling cannot be started via this
 # project
-# operations. If the profiling is triggered by another project, this project
-# part
-# will be empty.
+#   operations. If the profiling is triggered by another project, this project
+#   part will be empty.
 #  (boolean value)
 # Deprecated group/name - [profiler]/profiler_enabled
 #enabled = false
 
 #
-# Enables SQL requests profiling in services. Default value is False (SQL
-# requests won't be traced).
+# Enable SQL requests profiling in services.
+#
+# Default value is False (SQL requests won't be traced).
 #
 # Possible values:
 #
 # * True: Enables SQL requests profiling. Each SQL query will be part of the
-# trace and can the be analyzed by how much time was spent for that.
+#   trace and can the be analyzed by how much time was spent for that.
 # * False: Disables SQL requests profiling. The spent time is only shown on a
-# higher level of operations. Single SQL queries cannot be analyzed this
-# way.
+#   higher level of operations. Single SQL queries cannot be analyzed this way.
 #  (boolean value)
 #trace_sqlalchemy = false
 
@@ -2435,19 +2333,24 @@ connection = "mysql+pymysql://keystone:{{ openstack_keystone_db_password }}@{{ o
 # services
 # at least one key needs to be consistent between OpenStack projects. This
 # ensures it can be used from client side to generate the trace, containing
-# information from all possible resources. (string value)
+# information from all possible resources.
+#  (string value)
 #hmac_keys = SECRET_KEY
 
 #
-# Connection string for a notifier backend. Default value is messaging:// which
-# sets the notifier to oslo_messaging.
+# Connection string for a notifier backend.
+#
+# Default value is ``messaging://`` which sets the notifier to oslo_messaging.
 #
 # Examples of possible values:
 #
-# * messaging://: use oslo_messaging driver for sending notifications.
-# * mongodb://127.0.0.1:27017 : use mongodb driver for sending notifications.
-# * elasticsearch://127.0.0.1:9200 : use elasticsearch driver for sending
-# notifications.
+# * ``messaging://`` - use oslo_messaging driver for sending spans.
+# * ``redis://127.0.0.1:6379`` - use redis driver for sending spans.
+# * ``mongodb://127.0.0.1:27017`` - use mongodb driver for sending spans.
+# * ``elasticsearch://127.0.0.1:9200`` - use elasticsearch driver for sending
+#   spans.
+# * ``jaeger://127.0.0.1:6831`` - use jaeger tracing as driver for sending
+# spans.
 #  (string value)
 #connection_string = messaging://
 
@@ -2479,9 +2382,21 @@ connection = "mysql+pymysql://keystone:{{ openstack_keystone_db_password }}@{{ o
 #
 # Redissentinel uses a service name to identify a master redis service.
 # This parameter defines the name (for example:
-# sentinal_service_name=mymaster).
+# ``sentinal_service_name=mymaster``).
 #  (string value)
 #sentinel_service_name = mymaster
+
+#
+# Enable filter traces that contain error/exception to a separated place.
+#
+# Default value is set to False.
+#
+# Possible values:
+#
+# * True: Enable filter traces that contain error/exception.
+# * False: Disable the filter.
+#  (boolean value)
+#filter_error_trace = false
 
 
 [resource]
@@ -2893,54 +2808,24 @@ connection = "mysql+pymysql://keystone:{{ openstack_keystone_db_password }}@{{ o
 # From keystone
 #
 
-# This is a list of external authentication mechanisms which should add token
-# binding metadata to tokens, such as `kerberos` or `x509`. Binding metadata is
-# enforced according to the `[token] enforce_token_bind` option. (list value)
-#bind =
-
-# DEPRECATED: This controls the token binding enforcement policy on tokens
-# presented to keystone with token binding metadata (as specified by the
-# `[token] bind` option). `disabled` completely bypasses token binding
-# validation. `permissive` and `strict` do not require tokens to have binding
-# metadata (but will validate it if present), whereas `required` will always
-# demand tokens to having binding metadata. `permissive` will allow unsupported
-# binding metadata to pass through without validation (usually to be validated
-# at another time by another component), whereas `strict` and `required` will
-# demand that the included binding metadata be supported by keystone. (string
-# value)
-# This option is deprecated for removal since P.
-# Its value may be silently ignored in the future.
-#enforce_token_bind = permissive
-
 # The amount of time that a token should remain valid (in seconds). Drastically
 # reducing this value may break "long-running" operations that involve multiple
 # services to coordinate together, and will force users to authenticate with
-# keystone more frequently. Drastically increasing this value will increase
-# load on the `[token] driver`, as more tokens will be simultaneously valid.
-# Keystone tokens are also bearer tokens, so a shorter duration will also
-# reduce the potential security impact of a compromised token. (integer value)
+# keystone more frequently. Drastically increasing this value will increase the
+# number of tokens that will be simultaneously valid. Keystone tokens are also
+# bearer tokens, so a shorter duration will also reduce the potential security
+# impact of a compromised token. (integer value)
 # Minimum value: 0
 # Maximum value: 9223372036854775807
 #expiration = 3600
 
 # Entry point for the token provider in the `keystone.token.provider`
 # namespace. The token provider controls the token construction, validation,
-# and revocation operations. Keystone includes `fernet` and `uuid` token
-# providers. `uuid` tokens must be persisted (using the backend specified in
-# the `[token] driver` option), but do not require any extra configuration or
-# setup. `fernet` tokens do not need to be persisted at all, but require that
-# you run `keystone-manage fernet_setup` (also see the `keystone-manage
-# fernet_rotate` command). (string value)
-provider = fernet
-
-# DEPRECATED: Entry point for the token persistence backend driver in the
-# `keystone.token.persistence` namespace. Keystone provides the `sql` driver.
-# The `sql` option (default) depends on the options in your `[database]`
-# section. If you're using the `fernet` `[token] provider`, this backend will
-# not be utilized to persist tokens at all. (string value)
-# This option is deprecated for removal since P.
-# Its value may be silently ignored in the future.
-#driver = sql
+# and revocation operations. Keystone includes `fernet` token provider.
+# `fernet` tokens do not need to be persisted at all, but require that you run
+# `keystone-manage fernet_setup` (also see the `keystone-manage fernet_rotate`
+# command). (string value)
+#provider = fernet
 
 # Toggle for caching token creation and validation data. This has no effect
 # unless global caching is enabled. (boolean value)
@@ -2969,9 +2854,15 @@ provider = fernet
 # value)
 #allow_rescope_scoped_token = true
 
-# This controls whether roles should be included with tokens that are not
-# directly assigned to the token's scope, but are instead linked implicitly to
-# other role assignments. (boolean value)
+# DEPRECATED: This controls whether roles should be included with tokens that
+# are not directly assigned to the token's scope, but are instead linked
+# implicitly to other role assignments. (boolean value)
+# This option is deprecated for removal since R.
+# Its value may be silently ignored in the future.
+# Reason: Default roles depend on a chain of implied role assignments. Ex: an
+# admin user will also have the reader and member role. By ensuring that all
+# these roles will always appear on the token validation response, we can
+# improve the simplicity and readability of policy files.
 #infer_roles = true
 
 # Enable storing issued token data to token validation cache so that first
@@ -3022,14 +2913,6 @@ provider = fernet
 #
 # From keystone
 #
-
-# DEPRECATED: Delegation and impersonation features using trusts can be
-# optionally disabled. (boolean value)
-# This option is deprecated for removal since Q.
-# Its value may be silently ignored in the future.
-# Reason: Disabling the trusts API is deprecated. This option will be removed
-# in the next release and trusts will always be enabled.
-#enabled = true
 
 # Allows authorization to be redelegated from one user to another, effectively
 # chaining trusts together. When disabled, the `remaining_uses` attribute of a
