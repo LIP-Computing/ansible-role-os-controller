@@ -59,21 +59,21 @@
 #########
 - name: Waiting for keystone service is started.
   wait_for: "host={{ openstack_controller_host }} port=5000 timeout=10"
-  when: {{ inventory_hostname }} == openstack_init_host
+  when: inventory_hostname == openstack_init_host
 
 - name: Create keystone tables in DB
   command: keystone-manage db_sync
   become: true
   become_user: keystone
-  when: {{ inventory_hostname }} == openstack_init_host
+  when: inventory_hostname == openstack_init_host
 
 - name: Initialize fernet tokens
   command: keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
-  when: {{ inventory_hostname }} == openstack_init_host
+  when: inventory_hostname == openstack_init_host
 
 - name: Initialize fernet tokens
   command: keystone-manage credential_setup --keystone-user keystone --keystone-group keystone
-  when: {{ inventory_hostname }} == openstack_init_host
+  when: inventory_hostname == openstack_init_host
   notify: restart apache
 
 - name: Bootstrap keystone admin and endpoint
@@ -88,7 +88,7 @@
   until: add_service|success
   retries: 3
   delay: 5
-  when: {{ inventory_hostname }} == openstack_init_host
+  when: inventory_hostname == openstack_init_host
 
 # Project service
 - name: "Create the service project"
@@ -96,4 +96,4 @@
   vars:
     project: service
     description: "Service project"
-  when: {{ inventory_hostname }} == openstack_init_host
+  when: inventory_hostname == openstack_init_host
