@@ -74,7 +74,7 @@
 - name: Initialize fernet tokens
   command: keystone-manage credential_setup --keystone-user keystone --keystone-group keystone
   when: inventory_hostname == openstack_init_host
-  notify: restart apache
+  notify: restart keystone
 
 - name: Bootstrap keystone admin and endpoint
   command: |
