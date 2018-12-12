@@ -2825,7 +2825,7 @@ connection = "mysql+pymysql://keystone:{{ openstack_keystone_db_password }}@{{ o
 # `fernet` tokens do not need to be persisted at all, but require that you run
 # `keystone-manage fernet_setup` (also see the `keystone-manage fernet_rotate`
 # command). (string value)
-#provider = fernet
+provider = fernet
 
 # Toggle for caching token creation and validation data. This has no effect
 # unless global caching is enabled. (boolean value)

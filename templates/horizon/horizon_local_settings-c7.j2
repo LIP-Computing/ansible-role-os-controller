@@ -35,7 +35,7 @@ WEBROOT = '/dashboard/'
 # with the list of host/domain names that the application can serve.
 # For more information see:
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ['{{ openstack_controller_host }}', ]
+ALLOWED_HOSTS = ['{{ openstack_controller_host }}', 'localhost']
 
 # Set SSL proxy settings:
 # Pass this header from the proxy after terminating the SSL,
@@ -108,7 +108,7 @@ OPENSTACK_KEYSTONE_FEDERATION_MANAGEMENT = True
 # Toggle showing the openrc file for Keystone V2.
 # If set to false the link will be removed from the user dropdown menu
 # and the API Access page
-#SHOW_KEYSTONE_V2_RC = True
+SHOW_KEYSTONE_V2_RC = False
 
 # If provided, a "Report Bug" link will be displayed in the site header
 # which links to the value of this setting (ideally a URL containing
@@ -124,10 +124,6 @@ OPENSTACK_KEYSTONE_FEDERATION_MANAGEMENT = True
 #    "regex": '.*',
 #    "help_text": _("Your password does not meet the requirements."),
 #}
-
-# Disable simplified floating IP address management for deployments with
-# multiple floating IP pools or complex network requirements.
-#HORIZON_CONFIG["simple_ip_management"] = False
 
 # Turn off browser autocompletion for forms including the login form and
 # the database creation workflow if so desired.
@@ -153,6 +149,12 @@ SECRET_KEY='1bcd60cfbeb95f3071c8'
 # We recommend you use memcached for development; otherwise after every reload
 # of the django development server, you will have to login again. To use
 # memcached set CACHES to something like
+#CACHES = {
+#    'default': {
+#        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+#        'LOCATION': '127.0.0.1:11211',
+#    },
+#}
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 
 CACHES = {
@@ -161,13 +163,6 @@ CACHES = {
         'LOCATION': '{{ openstack_memcached_servers }}',
     },
 }
-
-#CACHES = {
-#    'default': {
-#        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-#        'LOCATION': '127.0.0.1:11211',
-#    },
-#}
 
 # Send email to the console by default
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -187,14 +182,16 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 #]
 
 OPENSTACK_HOST = "{{ openstack_controller_host }}"
-OPENSTACK_KEYSTONE_URL = "{{ openstack_endpoint_public_url }}"
+OPENSTACK_KEYSTONE_URL = "http://%s:5000/v3" % OPENSTACK_HOST
 OPENSTACK_KEYSTONE_DEFAULT_ROLE = "_member_"
 
 # For setting the default service region on a per-endpoint basis. Note that the
 # default value for this setting is {}, and below is just an example of how it
 # should be specified.
+# A key of '*' is an optional global default if no other key matches.
 #DEFAULT_SERVICE_REGIONS = {
-#    OPENSTACK_KEYSTONE_URL: 'RegionOne'
+#    '*': 'RegionOne'
+#    OPENSTACK_KEYSTONE_URL: 'RegionTwo'
 #}
 
 # Enables keystone web single-sign-on if set to True.
@@ -265,11 +262,6 @@ OPENSTACK_KEYSTONE_BACKEND = {
 # allowing Admin session password retrieval/decryption.
 #OPENSTACK_ENABLE_PASSWORD_RETRIEVE = False
 
-# This setting allows deployers to control whether a token is deleted on log
-# out. This can be helpful when there are often long running processes being
-# run in the Horizon environment.
-#TOKEN_DELETION_DISABLED = False
-
 # The Launch Instance user experience has been significantly enhanced.
 # You can choose whether to enable the new launch instance experience,
 # the legacy experience, or both. The legacy experience will be removed
@@ -281,8 +273,8 @@ OPENSTACK_KEYSTONE_BACKEND = {
 # Toggle LAUNCH_INSTANCE_LEGACY_ENABLED and LAUNCH_INSTANCE_NG_ENABLED to
 # determine the experience to enable.  Set them both to true to enable
 # both.
-#LAUNCH_INSTANCE_LEGACY_ENABLED = True
-#LAUNCH_INSTANCE_NG_ENABLED = False
+LAUNCH_INSTANCE_LEGACY_ENABLED = True
+LAUNCH_INSTANCE_NG_ENABLED = False
 
 # A dictionary of settings which can be used to provide the default values for
 # properties found in the Launch Instance modal.
@@ -514,16 +506,6 @@ POLICY_FILES_PATH = '/etc/openstack-dashboard'
 #    'network': 'neutron_policy.json',
 #}
 
-# TODO: (david-lyle) remove when plugins support adding settings.
-# Note: Only used when trove-dashboard plugin is configured to be used by
-# Horizon.
-# Trove user and database extension support. By default support for
-# creating users and databases on database instances is turned on.
-# To disable these extensions set the permission here to something
-# unusable such as ["!"].
-#TROVE_ADD_USER_PERMS = []
-#TROVE_ADD_DATABASE_PERMS = []
-
 # Change this patch to the appropriate list of tuples containing
 # a key, label and static directory containing two files:
 # _variables.scss and _styles.scss
@@ -627,11 +609,6 @@ LOGGING = {
             'propagate': False,
         },
         'openstack_auth': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
-        'nose.plugins.manager': {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': False,
@@ -789,18 +766,8 @@ SECURITY_GROUP_RULES = {
 #  $glance --os-image-api-version 2 help md-namespace-import
 #  $glance-manage db_load_metadefs <directory_with_definition_files>
 #
-# See Metadata Definitions on: http://docs.openstack.org/developer/glance/
-
-# TODO: (david-lyle) remove when plugins support settings natively
-# Note: This is only used when the Sahara plugin is configured and enabled
-# for use in Horizon.
-# Indicate to the Sahara data processing service whether or not
-# automatic floating IP allocation is in effect.  If it is not
-# in effect, the user will be prompted to choose a floating IP
-# pool for use in their cluster.  False by default.  You would want
-# to set this to True if you were running Nova Networking with
-# auto_assign_floating_ip = True.
-#SAHARA_AUTO_IP_ALLOCATION_ENABLED = False
+# See Metadata Definitions on:
+# https://docs.openstack.org/glance/latest/user/glancemetadefcatalogapi.html
 
 # The hash algorithm to use for authentication tokens. This must
 # match the hash algorithm that the identity server and the
@@ -823,6 +790,7 @@ SECURITY_GROUP_RULES = {
 REST_API_REQUIRED_SETTINGS = ['OPENSTACK_HYPERVISOR_FEATURES',
                               'LAUNCH_INSTANCE_DEFAULTS',
                               'OPENSTACK_IMAGE_FORMATS',
+                              'OPENSTACK_KEYSTONE_BACKEND',
                               'OPENSTACK_KEYSTONE_DEFAULT_DOMAIN',
                               'CREATE_IMAGE_DEFAULTS',
                               'ENFORCE_PASSWORD_CHECK']
@@ -902,7 +870,8 @@ ALLOWED_PRIVATE_SUBNET_CIDR = {'ipv4': [], 'ipv6': []}
 # Horizon has the ability to display these extra attributes via this setting.
 # If you'd like to display extra data in the project or user tables, set the
 # corresponding dict key to the attribute name, followed by the display name.
-# For more information, see horizon's customization (http://docs.openstack.org/developer/horizon/topics/customizing.html#horizon-customization-module-overrides)
+# For more information, see horizon's customization
+# (https://docs.openstack.org/horizon/latest/configuration/customizing.html#horizon-customization-module-overrides)
 #PROJECT_TABLE_EXTRA_INFO = {
 #   'phone_num': _('Phone Number'),
 #}
