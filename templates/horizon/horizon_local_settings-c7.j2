@@ -182,7 +182,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 #]
 
 OPENSTACK_HOST = "{{ openstack_controller_host }}"
-OPENSTACK_KEYSTONE_URL = "http://%s:5000/v3" % OPENSTACK_HOST
+OPENSTACK_KEYSTONE_URL = "{{ openstack_ks_url }}"
 OPENSTACK_KEYSTONE_DEFAULT_ROLE = "_member_"
 
 # For setting the default service region on a per-endpoint basis. Note that the
