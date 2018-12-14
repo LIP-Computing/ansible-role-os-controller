@@ -14,7 +14,7 @@
     path: /etc/httpd/conf/httpd.conf
     regexp: "^ServerName "
     insertafter: "^#ServerName "
-    line: "ServerName {{ ansible_default_ipv4 }}"
+    line: "ServerName {{ ansible_default_ipv4.address }}"
 
 - name: Copy the configuration files for horizon.
   template: src=horizon/horizon_local_settings-u18.j2 dest=/etc/openstack-dashboard/local_settings.py
