@@ -14,6 +14,13 @@
     - '{{ url_oidc }}'
   when: ansible_os_family == 'Debian'
 
+- name: Set ServerName
+  lineinfile:
+    path: /etc/httpd/conf/httpd.conf
+    regexp: "^ServerName "
+    insertafter: "^#ServerName "
+    line: "ServerName {{ ansible_default_ipv4.address }}"
+
 - name: Deploy keyston configuration files from templates
   template: src={{ item.src }} dest={{ item.dest }} mode=0644
   with_items:
