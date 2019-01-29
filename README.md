@@ -247,4 +247,4 @@ FAQ
 Author Information
 ------------------
 
-Contact: Mario David <mariojmdavid@gmail.com, original from Jorge Cedillo <jorgesece@lip.pt>
+Contact: Mario David <mariojmdavid@gmail.com, original from Jorge Sevilla <jorgesece@gmail.com>
